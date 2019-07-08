@@ -9,6 +9,7 @@ end
 
 [err,sECM] = a.InitialParameters;
 if err
+    printf('Error\n');
     return
 end
 SamplePoints = length(a.timeVec);
