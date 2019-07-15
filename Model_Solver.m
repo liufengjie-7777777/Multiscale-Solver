@@ -1,24 +1,24 @@
 clear variables; close all; clc;
 
 %Define a as artrey and calc n
-if input('Which experiment do you want to simulate?\nEnter 1 for biaxial and 0 for uniaxial: ')
+if 1%input('Which experiment do you want to simulate?\nEnter 1 for biaxial and 0 for uniaxial: ')
     a = ArteryVessel;
 else
     a = ArteryStrip;
 end
 
-[err,sECM] = a.InitialParameters;
+err = a.InitialParameters;
 if err
     printf('Error\n');
     return
 end
-SamplePoints = length(a.timeVec);
+SamplePoints = length(a.V.timeVec);
 
 %Active Simulation
 for i=1:SamplePoints
-    fprintf('(%d/%d) Time=%.1f sec: ',i,SamplePoints,a.timeVec(i));
+    fprintf('(%d/%d) Time=%.1f sec: ',i,SamplePoints,a.V.timeVec(i));
     tic
-    if a.stepCalc(i,sECM)
+    if a.stepCalc(i)
         fprintf('Error calculating current step\n');
         return
     end

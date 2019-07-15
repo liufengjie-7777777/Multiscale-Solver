@@ -180,15 +180,14 @@ classdef Artery < handle
         %Stress Functions(:,1)-r (:,2)-theta (:,3)-z
         function obj = sECM(obj)
             aj = obj.alphaj(1:4);
-            for j=1:length(obj.cs.lt)
-                C1 = (obj.cs.lt(j)^2).*sin(aj).^2 + (obj.cs.lz(j)^2)*cos(aj).^2 - 1;
-                
-                obj.cs.sECM(:,j) = [...
-                    obj.Cp.*obj.cs.lr(j).^2;
-                    obj.cs.lt(j)^2.*(obj.Cp + sum( obj.c(1,:).*exp( obj.c(2,:).*C1.^2).*(sin(aj).^2).*C1 ) );
-                    obj.cs.lz(j)^2.*(obj.Cp + sum( obj.c(1,:).*exp( obj.c(2,:).*C1.^2).*(cos(aj).^2).*C1 ) );
-                    ];
-            end
+            for i=1:l
+            C1 = (obj.cs.lt.^2).*sin(aj).^2 + (obj.cs.lz.^2)*cos(aj).^2 - 1;
+            
+            obj.cs.sECM = [...
+                obj.Cp.*obj.cs.lr.^2;
+                obj.cs.lt.^2.*(obj.Cp + sum( obj.c(1,:).*exp( obj.c(2,:).*C1.^2).*(sin(aj).^2).*C1 ) );
+                obj.cs.lz.^2.*(obj.Cp + sum( obj.c(1,:).*exp( obj.c(2,:).*C1.^2).*(cos(aj).^2).*C1 ) );
+                ];
         end
         function obj = sSMC(obj)
             obj.cs.sSMC = ...

@@ -1,28 +1,47 @@
 classdef CurrentState < handle
     properties
         %Uniaxial
-        lr = sym('lr','positive');
-        lt = 1.69;
+        lrG = sym('lr','positive');
+        ltG = 1.69;
         
         %Biaxial
-        ri = sym('ri','positive'); %Inner Radius
         Pin = 90*133.322387415*1e-6; %Inner Pressure
         lambda = 1.5;
         
+        riG = sym('ri','positive'); %Inner Radius
+        
+        r
+        R
+        
+        x
+        w
+        xNum
+        wNum
+        
+        ri
+        ro
         riNum = 0;
+        roNum
         FT
         
         %Both Simulations
         p = sym('p','real');
         
-        ufs = 0;
-        nAMp = 0;
-        nAM = 0;
+        ufs
+        nAMp
+        nAM
+        
+        %Stretch Ratios
+        lr
+        lt
+        lz
         
         lrNum
         ltNum
-        lz
+        lzNum
         
+        dMArMA0
+        dMAzMA0
         LMr
         LMz
         Lfor
@@ -35,13 +54,13 @@ classdef CurrentState < handle
         I4SMCe
         I4SMCeNum
         
-        I4SMCNum
-        I4SMCrNum
-        
         sECM
         sSMC
         sMMy
         
+        PMM
+        PCU
+        Pisom
     end
     
     methods
