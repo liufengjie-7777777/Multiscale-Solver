@@ -46,10 +46,10 @@ classdef SimulationVectors < handle
         function obj = UpdateVectors(obj,i,cs)
             obj.ufsVec(i,:) = cs.ufs;
             obj.stretchVec(i,:) = [cs.lrNum,cs.ltNum,cs.lzNum, (cs.lrNum*cs.ltNum*cs.lzNum)];
-            obj.sECMVec(i,:) = subs(cs.sECM,[cs.ri,cs.lrG],[cs.riNum,cs.lrNum]);
-            obj.sSMCVec(i,:) = subs(cs.sSMC,[cs.ri,cs.lrG],[cs.riNum,cs.lrNum]);
-            obj.sMMyVec(i,:) = subs(cs.sMMy,[cs.ri,cs.lrG],[cs.riNum,cs.lrNum]);
-            obj.PMMCUVec(i,:) = subs([cs.PMM,cs.PCU],[cs.ri,cs.lrG],[cs.riNum,cs.lrNum]);
+            obj.sECMVec(i,:) = subs(cs.sECM,[cs.riG,cs.lrG],[cs.riNum,cs.lrNum]);
+            obj.sSMCVec(i,:) = subs(cs.sSMC,[cs.riG,cs.lrG],[cs.riNum,cs.lrNum]);
+            obj.sMMyVec(i,:) = subs(cs.sMMy,[cs.riG,cs.lrG],[cs.riNum,cs.lrNum]);
+            obj.PMMCUVec(i,:) = subs([cs.PMM,cs.PCU],[cs.riG,cs.lrG],[cs.riNum,cs.lrNum]);
             
             if ~isempty(obj.PisomVec)
                 obj.PisomVec(i) = cs.Pisom;

@@ -1,7 +1,7 @@
 clear variables; close all; clc;
 
 %Define a as artrey and calc n
-if 1%input('Which experiment do you want to simulate?\nEnter 1 for biaxial and 0 for uniaxial: ')
+if 0%input('Which experiment do you want to simulate?\nEnter 1 for biaxial and 0 for uniaxial: ')
     a = ArteryVessel;
 else
     a = ArteryStrip;

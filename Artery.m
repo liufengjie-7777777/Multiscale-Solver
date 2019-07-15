@@ -180,6 +180,7 @@ classdef Artery < handle
         %Stress Functions(:,1)-r (:,2)-theta (:,3)-z
         function obj = sECM(obj)
             aj = obj.alphaj(1:4);
+            obj.cs.sECM = zeros(3,length(obj.cs.lt))*obj.cs.riG;
             for j=1:length(obj.cs.lt)
                 C1 = (obj.cs.lt(j)^2).*sin(aj).^2 + (obj.cs.lz(j)^2)*cos(aj).^2 - 1;
                 

@@ -50,7 +50,8 @@ classdef ArteryStrip < Artery
             
             obj.cs.lr = obj.cs.lrNum;
             obj.cs.lt = obj.cs.ltNum;
-            
+            obj.cs.lz = obj.cs.lzNum;
+             
             obj.LMi; obj.Lfoi;
             obj.eS2(1); obj.eS2(2);
             obj.cs.I4SMCeNum = obj.I4SMCe;
