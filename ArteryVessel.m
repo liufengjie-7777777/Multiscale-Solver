@@ -12,15 +12,15 @@ classdef ArteryVessel < Artery
             hadv = obj.H0/2; %Approximate diffusion distance through the Adventitia (same units as H0)
         end
         function r = r(obj)
-        	r = sqrt( ((pi-obj.phi0/2)/(pi*obj.cs.lz)) .* (obj.cs.R.^2-obj.Ri^2) + obj.cs.ri.^2 );
+        	r = sqrt( ((pi-obj.phi0/2)/(pi*obj.lz)) .* (obj.cs.R.^2-obj.Ri^2) + obj.cs.ri.^2 );
         end
-        function obj = R(obj)
-        	obj.cs.R = sqrt( ((pi*obj.cs.lz)/(pi-obj.phi0/2)) .* (obj.cs.r.^2-obj.cs.ri.^2) + obj.Ri^2  );
+        function R = R(obj)
+        	R = sqrt( ((pi*obj.lz)/(pi-obj.phi0/2)) .* (obj.cs.r.^2-obj.cs.ri.^2) + obj.Ri^2  );
         end
         
         %Stretch Ratios
         function lr = lr(obj)
-            lr = (pi-obj.phi0/2) .* obj.cs.R ./ (pi.*obj.cs.r.*obj.cs.lz);
+            lr = (pi-obj.phi0/2) .* obj.cs.R ./ (pi.*obj.cs.r.*obj.lz);
         end
         function lz = lz(obj)
             lz = obj.cs.lambda*obj.Deltaz;
@@ -31,115 +31,107 @@ classdef ArteryVessel < Artery
         
         %Some Shortcuts
         function obj = ro(obj,N)
-            %N=1 numeric
-            if N
+            %N=1 for numeric ro
+            if N %changing ri to its last known numeric value
                 obj.cs.ri = obj.cs.riNum;
             end
-            obj.cs.R = obj.Ro;
-            obj.cs.ro = obj.r;
-            
-            obj.cs.ri = obj.cs.riG;
-            obj.R;
+            obj.cs.R = obj.Ro; %changing cs R to Ro
+            if N %if numeric then save in cs roNum and return ri to sym
+                obj.cs.roNum = obj.r;
+                obj.cs.ri = obj.cs.riG;
+            else %else save in cs ro
+                obj.cs.ro = obj.r;
+            end
+            obj.cs.R = obj.R; %calc cs R again
         end
         
         %Calculate ri
         function err = riCalc(obj)
+            %Calculates the new cs ri
             s = obj.cs.sECM + obj.cs.sSMC + obj.cs.sMMy;
             
             Sr = s(1,:); St = s(2,:); Sz = s(3,:);
             
             f = sum( ((St-Sr)./obj.cs.x).*obj.cs.w );
             
-            if obj.cs.riNum
+            if obj.cs.riNum %Use the previous riNum value for the numeric sol
             	riNew = double(vpasolve(f == obj.cs.Pin,[0.9*obj.cs.riNum 1.1*obj.cs.riNum]));
-            else
+            else 
             	riNew = double(vpasolve(f == obj.cs.Pin,[0 2]));
             end
             
             if isempty(riNew)
-                fprintf('Error calculating ri\n');
                 err = 1;
             else
-                obj.cs.riNum = riNew;
-                obj.xwNum;
-                obj.cs.FT = obj.FTCalc(Sr,St,Sz);
+                obj.cs.riNum = riNew; %Updates riNum
+                obj.xwNum; %Updates numeric x and w
+                obj.cs.FT = obj.FTCalc(Sr,St,Sz); %Calcs F_T
+                %Updates the new numeric values of the stretches
+                obj.cs.r = obj.cs.xNum; %Temporarily change r and ri to numeric values
+                obj.cs.ri = obj.cs.riNum;
+                obj.cs.R = obj.R; %Updates R to numerics values
                 
-                obj.cs.r = obj.cs.xNum;
-                obj.R;
-                
-                obj.cs.ltNum = obj.lt;
                 obj.cs.lrNum = obj.lr;
+                obj.cs.ltNum = obj.lt;
                 obj.cs.lzNum = obj.lz;
                 
-                if obj.ufs == 0
-                    obj.ufs = sqrt( (obj.cs.lrNum.^2)*power(sin(obj.thetaSMC),2) + (obj.cs.ltNum.^2)*power(cos(obj.thetaSMC),2) );
+                if obj.cs.ufs == 0 %If ufs doesn't exists - calculate numeric values by I4SMCe=1
+                    obj.cs.ufs = sqrt( (obj.cs.lrNum.^2)*power(sin(obj.thetaSMC),2) + (obj.cs.ltNum.^2)*power(cos(obj.thetaSMC),2) );
                 end
-                
+                %Update r, ri and R to sym values
                 obj.cs.r = obj.cs.x;
-                obj.R;
+                obj.cs.ri = obj.cs.riG;
+                obj.cs.R = obj.R;
                 
                 err = 0;
             end
         end
         
         function err = stepCalc(obj,i)
-            %Current Step Myosin Fractions
-            obj.nAMp = obj.nAMpVec(i);
-            obj.nAM = obj.nAMVec(i);
-            
-            obj.xwNum;
-            
-            obj.cs.lr = obj.cs.lrNum;
-            
-            obj.LMi;
-            obj.Lfoi;
-            obj.eS2(1);
-            obj.eS2(2);
-            obj.cs.I4SMCeNum = obj.I4SMCe;
+            %Update current Step Myosin Fractions
+            obj.cs.nAMp = obj.V.nAMpVec(i);
+            obj.cs.nAM = obj.V.nAMVec(i);
+            %Update ufs (also calculate and save numeric values of
+            %dMAiMA0,LMi,Lfoi and eS2)
             obj.ufsUpdate;
-            
-            obj.cs.lr = obj.cs.x;
-            
+            %Update the active stress components
             obj.sSMC;
             obj.sMMy;
             
-            if obj.riCalc
+            if obj.riCalc %Calculate new cs riNum and FT
                 fprintf('Error calculating ri\n');
                 err = 1;
             else
-                %rm = (obj.cs.riNum+obj.roNum)/2; %Middle radii
+                obj.V.UpdateVectors(i,obj.cs);
                 
-                %PMMCU = subs([obj.PMM,obj.PCU],obj.riNum);
-                
-                %obj.V.UpdateVectors(i,obj.cs);
-                
-                %fprintf('| Do=%.2f kPa | F_T=%.2f mN | ',obj.V.DoVec(i),obj.V.FTVec(i));
+                fprintf('| Do=%.2f kPa | F_T=%.2f mN | ',obj.V.DoVec(i),obj.V.FTVec(i));
                 err = 0;
             end
         end
         
         function [err] = InitialParameters(obj)
             obj.nCalc;
-            
             obj.cs.ri = obj.cs.riG;
-
+            
+            obj.xw;
+            obj.cs.r = obj.cs.x;
+            obj.cs.R = obj.R;
+            
             obj.cs.lr = obj.lr;
             obj.cs.lt = obj.lt;
-            obj.cs.lz = obj.lz; obj.cs.lzNum = obj.cs.lz;
-                        
-            obj.xw;
+            obj.cs.lz = obj.lz;
             
             obj.sECM;
-            obj.cs.sSMC = zeros(size(obj.cs.sECM));
-            obj.cs.sECM = zeros(size(obj.cs.sECM));
+            obj.cs.sSMC = sym(zeros(size(obj.cs.sECM)));
+            obj.cs.sMMy = sym(zeros(size(obj.cs.sECM)));
             
             if obj.riCalc
                 fprintf('Error calculating ri\n');
                 err = 1;
             else
                 fprintf('Initial Passive Conditions: ');
-                fprintf('Do=%.3f, lr=%.3f, lt=%.3f, lz=%.3f \n',obj.roNum*2e3,obj.lrNum(obj.riNum),obj.ltNum(obj.riNum),obj.lz);
-                obj.V.InitialVectors(length(obj.timeVec),0);
+                fprintf('Do=%.3f, lr=%.3f, lt=%.3f, lz=%.3f, detF=%.3f \n',obj.cs.roNum*2e3,obj.cs.lrNum(2),obj.cs.ltNum(2),obj.lz,(obj.cs.lrNum(2)*obj.cs.ltNum(2)*obj.lz));
+                obj.V.InitialVectors(length(obj.V.timeVec),0);
                 err = 0;
             end
         end
@@ -186,21 +178,21 @@ classdef ArteryVessel < Artery
         
         function obj = PlotResults(obj)
             figure(1);
-            plot(obj.timeVec./60,obj.V.DoVec);
+            plot(obj.V.timeVec,obj.V.DoVec);
             grid on; ylim([600 1300]); xlim([0 obj.TotalTime]); %ylim([0 (ceil(max(obj.DoVec))+100)]);
             ylabel('Do (um)'); xlabel('time (min)');
-            title(['lz=' num2str(obj.lz) ' Pin=' num2str(obj.Pin/133.322387415*1e6) ' mmHg']);
+            title(['lz=' num2str(obj.lz) ' Pin=' num2str(obj.cs.Pin/133.322387415*1e6) ' mmHg']);
             
             figure(2);
-            plot(obj.timeVec./60,obj.V.FTVec);
+            plot(obj.V.timeVec,obj.V.FTVec);
             minFT = min(obj.V.FTVec);
             maxFT = max(obj.V.FTVec);
-            if minFT<0
+            if minFT>2
                 minFT = ceil(minFT-2);
             else
-               minFT = 0; 
+               minFT = 0;
             end
-            if maxFT<0
+            if maxFT>0
                 maxFT = ceil(maxFT+2);
             else
                 maxFT = 0;
@@ -209,16 +201,16 @@ classdef ArteryVessel < Artery
             ylabel('F_T (mN)'); xlabel('time (min)');
             
             figure(3);
-            plot(obj.timeVec./60,obj.V.stretchVec);
+            plot(obj.V.timeVec,obj.V.stretchVec);
             grid on; ylim([0 2]); xlim([0 obj.TotalTime]);
             ylabel('Stretch Ratio'); xlabel('time (min)');
             legend('\lambda_r','\lambda_\theta','\lambda_z','det(F)');
 
             figure(4);
-            plot(obj.timeVec./60,obj.V.PMMCUVec*1e3);
+            plot(obj.V.timeVec,obj.V.PMMCUVec*1e3);
             ylabel('Stress (kPa)'); ylim([0 ceil(max(obj.V.PMMCUVec*1e3,[],'all')+10)]);
             hold on; yyaxis right;
-            plot(obj.timeVec./60,obj.V.ufsVec);
+            plot(obj.V.timeVec,obj.V.ufsVec);
             h = legend('$P_{MM}$','$P_{CU}$','$\bar{u}_{fs}$ (right axis)');
             ylabel('ufs'); xlabel('time (min)'); grid on; hold off;
             set(h,'Interpreter','latex','fontsize',12);   

@@ -48,20 +48,20 @@ classdef Artery < handle
     methods
         %Defomation Tensor and etc.
         function F = F(obj)
-            F = zeros(3,3,length(obj.cs.lr))*obj.cs.lr; %multiply with ri to make it symbolic
+            F = sym(zeros(3,3,length(obj.cs.lr)));
             for j=1:length(obj.cs.lr)
-                F = diag([obj.cs.lr(j),obj.cs.lt(j),obj.cs.lz(j)]);
+                F = diag([obj.cs.lr(j),obj.cs.lt(j),obj.cs.lz]);
             end
         end
         function C = C(obj)
             F = obj.F;
-            C = zeros(3,3,length(obj.cs.lr))*obj.cs.lr; %multiply with ri to make it symbolic
+            C = sym(zeros(3,3,length(obj.cs.lr)));
             for j=1:length(obj.cs.lr)
                 C(:,:,j) = transpose(F(:,:,j)*F(:,:,j));
             end
         end
         function Ffs = Ffs(obj)
-            Ffs = zeros(3,3,length(obj.cs.ufs));
+            Ffs = sym(zeros(3,3,length(obj.cs.ufs)));
             Mat = obj.MSMC'*obj.MSMC;
             for j=1:length(obj.cs.ufs)
                 Ffs(:,:,j) = obj.cs.ufs(j)*Mat+(eye(3)-Mat)/sqrt(obj.cs.ufs(j));
@@ -70,14 +70,14 @@ classdef Artery < handle
         function Fe = Fe(obj)
         	F = obj.F;
             Ffs = obj.Ffs;
-            Fe = zeros(3,3,length(obj.cs.ufs))*obj.cs.ri; %multiply with ri to make it symbolic
+            Fe = sym(zeros(3,3,length(obj.cs.ufs)));
             for j=1:length(obj.cs.ufs)
             	Fe(:,:,j) = F(:,:,j)/Ffs(:,:,j); %Fe=F*inv(Ffs)
             end
         end
         function Ce = Ce(obj)
             Fe = obj.Fe;
-            Ce = zeros(3,3,length(obj.cs.ufs))*obj.cs.ri;
+            Ce = sym(zeros(3,3,length(obj.cs.ufs)));
             for j=1:length(obj.cs.ufs)
                 Ce(:,:,j) = transpose(Fe(:,:,j))*Fe(:,:,j);
             end
@@ -127,67 +127,82 @@ classdef Artery < handle
         	obj.cs.LMz = obj.LMmax*(1-obj.kqp*obj.cs.dMAzMA0); obj.cs.LMz(subs(obj.cs.LMz,obj.cs.lrNum)<0) = 0;
         end
         function obj = Lfoi(obj)
+            obj.LMi;
             obj.cs.Lfor = exp( -power(obj.cs.ufs-obj.ufoOpt,2)./(2*power(obj.cfo.*obj.cs.LMr./obj.LMmax,2)) );
             obj.cs.Lfoz = exp( -power(obj.cs.ufs-obj.ufoOpt,2)./(2*power(obj.cfo.*obj.cs.LMz./obj.LMmax,2)) );
         end
-        function obj = eS2(obj,i)
-            %i=1 for r direction and i=2 for z
-            if i==1
-                dMAiMA0 = subs(obj.cs.dMArMA0,obj.cs.lrNum);
-            else
-                dMAiMA0 = subs(obj.cs.dMAzMA0,obj.cs.lrNum);
-            end
-            dMAi = dMAiMA0*obj.dMA0;
-            
-            eS2x = zeros(1,length(dMAi)); eS2y = eS2x;
-            for j=1:length(dMAi)
-                if dMAiMA0(j) < 1
-                    LLAi = obj.LLA0.*dMAiMA0(j);
-                    LS2i = obj.LS20 + obj.LLA0.*(1-dMAiMA0(j));
+        function obj = eS2(obj)
+            for i=1:2
+                %i=1 for r direction and i=2 for z
+                if i==1
+                    dMAiMA0 = obj.cs.dMArMA0;
                 else
-                    LLAi = obj.LLA0;
-                    LS2i = obj.LS20;
+                    dMAiMA0 = obj.cs.dMAzMA0;
                 end
+                dMAi = dMAiMA0*obj.dMA0;
+                
+                eS2x = zeros(1,length(dMAi)); eS2y = eS2x;
+                for j=1:length(dMAi)
+                    if dMAiMA0(j) < 1
+                        LLAi = obj.LLA0.*dMAiMA0(j);
+                        LS2i = obj.LS20 + obj.LLA0.*(1-dMAiMA0(j));
+                    else
+                        LLAi = obj.LLA0;
+                        LS2i = obj.LS20;
+                    end
 
-                if (obj.lMD + obj.LLA0 + obj.LS20) > dMAi(j) && dMAi(j) >= obj.lMD
-                    x2i = sqrt(LS2i.^2 - (dMAi(j)-obj.lMD-LLAi).^2);
-                    y2i = dMAi(j) - obj.lMD - LLAi;
+                    if (obj.lMD + obj.LLA0 + obj.LS20) > dMAi(j) && dMAi(j) >= obj.lMD
+                        x2i = sqrt(LS2i.^2 - (dMAi(j)-obj.lMD-LLAi).^2);
+                        y2i = dMAi(j) - obj.lMD - LLAi;
 
-                    x2ci = x2i + LLAi.*sin(obj.alphaPS);
-                    y2ci = dMAi(j) - obj.lMD - LLAi.*cos(obj.alphaPS);
+                        x2ci = x2i + LLAi.*sin(obj.alphaPS);
+                        y2ci = dMAi(j) - obj.lMD - LLAi.*cos(obj.alphaPS);
 
-                    eS2x(1,j) = (x2ci./sqrt(x2i.^2 + y2i.^2))*(1 - sqrt((x2i.^2 + y2i.^2)/(x2ci.^2 + y2ci.^2)));
-                    eS2y(1,j) = (y2ci./sqrt(x2i.^2 + y2i.^2))*(1 - sqrt((x2i.^2 + y2i.^2)/(x2ci.^2 + y2ci.^2)));
+                        eS2x(1,j) = (x2ci./sqrt(x2i.^2 + y2i.^2))*(1 - sqrt((x2i.^2 + y2i.^2)/(x2ci.^2 + y2ci.^2)));
+                        eS2y(1,j) = (y2ci./sqrt(x2i.^2 + y2i.^2))*(1 - sqrt((x2i.^2 + y2i.^2)/(x2ci.^2 + y2ci.^2)));
+                    else
+                        eS2x(1,j) = 0;
+                        eS2y(1,j) = 0;
+                    end
+                end
+                if i==1
+                    obj.cs.eS2xr = eS2x;
+                    obj.cs.eS2yr = eS2y;
                 else
-                    eS2x(1,j) = 0;
-                    eS2y(1,j) = 0;
+                    obj.cs.eS2xz = eS2x;
+                    obj.cs.eS2yz = eS2y;
                 end
-            end
-            if i==1
-                obj.cs.eS2xr = eS2x;
-                obj.cs.eS2yr = eS2y;
-            else
-                obj.cs.eS2xz = eS2x;
-                obj.cs.eS2yz = eS2y;
             end
         end
         function obj = ufsUpdate(obj)
+            strain = vertcat(obj.cs.lr,obj.cs.lt,sym(ones(1,length(obj.cs.lt))*obj.lz));
+            obj.cs.lr = obj.cs.lrNum;
+            obj.cs.lt = obj.cs.ltNum;
+            obj.cs.lz = obj.cs.lzNum;
+            
+            obj.Lfoi;
+            obj.eS2;
+            
             ufsdot = double(obj.beta*(obj.PCU-obj.PMM));
             if ufsdot<0
                 obj.cs.ufs = obj.cs.ufs + ufsdot*obj.dt; %#ok<*MCNPN>
             end
+            
+            obj.cs.lr = strain(1,:);
+            obj.cs.lt = strain(2,:);
+            obj.cs.lz = strain(3,:);
         end
         %Stress Functions(:,1)-r (:,2)-theta (:,3)-z
         function obj = sECM(obj)
             aj = obj.alphaj(1:4);
-            obj.cs.sECM = zeros(3,length(obj.cs.lt))*obj.cs.riG;
-            for j=1:length(obj.cs.lt)
-                C1 = (obj.cs.lt(j)^2).*sin(aj).^2 + (obj.cs.lz(j)^2)*cos(aj).^2 - 1;
+            obj.cs.sECM = sym(zeros(3,length(obj.cs.lr)));
+            for j=1:length(obj.cs.lr)
+                C1 = (obj.cs.lt(j)^2).*sin(aj).^2 + (obj.cs.lz^2)*cos(aj).^2 - 1;
                 
                 obj.cs.sECM(:,j) = [...
                     obj.Cp.*obj.cs.lr(j).^2;
                     obj.cs.lt(j)^2.*(obj.Cp + sum( obj.c(1,:).*exp( obj.c(2,:).*C1.^2).*(sin(aj).^2).*C1 ) );
-                    obj.cs.lz(j)^2.*(obj.Cp + sum( obj.c(1,:).*exp( obj.c(2,:).*C1.^2).*(cos(aj).^2).*C1 ) );
+                    obj.cs.lz^2.*(obj.Cp + sum( obj.c(1,:).*exp( obj.c(2,:).*C1.^2).*(cos(aj).^2).*C1 ) );
                     ];
             end
         end

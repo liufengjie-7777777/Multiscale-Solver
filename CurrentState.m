@@ -1,14 +1,13 @@
 classdef CurrentState < handle
     properties
         %Uniaxial
-        lrG = sym('lr','positive');
+        lrG = sym('lr','positive'); %G stands for global and constant variables
         ltG = 1.69;
         
         %Biaxial
+        riG = sym('ri','positive'); %Inner Radius
         Pin = 90*133.322387415*1e-6; %Inner Pressure
         lambda = 1.5;
-        
-        riG = sym('ri','positive'); %Inner Radius
         
         r
         R
@@ -27,7 +26,7 @@ classdef CurrentState < handle
         %Both Simulations
         p = sym('p','real');
         
-        ufs
+        ufs = 0;
         nAMp
         nAM
         
