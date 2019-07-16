@@ -35,7 +35,7 @@ classdef CurrentState < handle
         lt
         lz
         
-        lrNum
+        lrNum = 0;
         ltNum
         lzNum
         

@@ -5,11 +5,11 @@ classdef ArteryStrip < Artery
     end
     methods
         %Stretch Ratios
-        function obj = lz(obj)
-            obj.cs.lz = 1./(obj.cs.lt.*obj.cs.lr);
+        function lz = lz(obj)
+            lz = 1./(obj.cs.lt.*obj.cs.lr);
         end
-        function obj = lzNum(obj)
-            obj.cs.lzNum = 1./(obj.cs.ltNum.*obj.cs.lrNum);
+        function lzNum = lzNum(obj)
+            lzNum = 1./(obj.cs.ltNum.*obj.cs.lrNum);
         end
         
         function obj = Pisom(obj)
@@ -28,18 +28,22 @@ classdef ArteryStrip < Artery
             s = obj.cs.sECM + obj.cs.sSMC + obj.cs.sMMy;
             
             Sr = s(1); Sz = s(3);
-            lrNew = vpasolve(Sr == Sz,obj.cs.lrG,[0 2]);
-            
+            if obj.cs.lrNum
+                lrNew = vpasolve(Sr == Sz,obj.cs.lrG,[0.9*obj.cs.lrNum 1.1*obj.cs.lrNum]);
+            else
+                lrNew = vpasolve(Sr == Sz,obj.cs.lrG,[0 2]);
+            end
             if isempty(lrNew)
                 fprintf('Error calculating lr\n');
                 err = 1;
             else
-                err = 0;
                 obj.cs.lrNum = double(lrNew);
-                obj.lzNum;
+                obj.cs.lzNum = obj.lzNum;
                 if obj.cs.ufs == 0
                     obj.cs.ufs = sqrt( (obj.cs.lrNum.^2)*power(sin(obj.thetaSMC),2) + (obj.cs.ltNum.^2)*power(cos(obj.thetaSMC),2) );
                 end
+                
+                err = 0;
             end
         end
         
@@ -48,17 +52,7 @@ classdef ArteryStrip < Artery
             obj.cs.nAMp = obj.V.nAMpVec(i);
             obj.cs.nAM = obj.V.nAMVec(i);
             
-            obj.cs.lr = obj.cs.lrNum;
-            obj.cs.lt = obj.cs.ltNum;
-            obj.cs.lz = obj.cs.lzNum;
-             
-            obj.LMi; obj.Lfoi;
-            obj.eS2(1); obj.eS2(2);
-            obj.cs.I4SMCeNum = obj.I4SMCe;
             obj.ufsUpdate;
-            
-            obj.cs.lr = obj.cs.lrG;
-            obj.lz;
             
             obj.sSMC;
             obj.sMMy;
@@ -80,25 +74,24 @@ classdef ArteryStrip < Artery
             obj.nCalc;
             
             %2nd Step - Calculate Passive State
-            obj.cs.lt = obj.cs.ltG;
             obj.cs.lr = obj.cs.lrG;
-            obj.lz;
+            obj.cs.lt = obj.cs.ltG;
+            obj.cs.lz = obj.lz;
             
             obj.cs.ltNum = obj.cs.lt;
             
             obj.sECM;
-            obj.cs.sSMC = 0;
-            obj.cs.sMMy = 0;
+            obj.cs.sSMC = zeros(3,1);
+            obj.cs.sMMy = zeros(3,1);
             
-            obj.cs.I4SMCe = 1;
-            obj.cs.ufs = 0;
+            %obj.cs.I4SMCe = 1;
             
             if obj.lrCalc
                 fprintf('Error calculating lr\n');
                 err = 1;
             else
                 fprintf('Initial Passive Conditions: ');
-                fprintf('lr=%.3f, lt=%.3f, lz=%.3f, det(F)=%.3f \n',obj.cs.lrNum,obj.cs.lt,obj.cs.lzNum,(obj.cs.lrNum*obj.cs.lt*obj.cs.lzNum));
+                fprintf('lr=%.3f, lt=%.3f, lz=%.3f, det(F)=%.3f \n',obj.cs.lrNum,obj.cs.ltNum,obj.cs.lzNum,(obj.cs.lrNum*obj.cs.ltNum*obj.cs.lzNum));
                 obj.V.InitialVectors(length(obj.V.timeVec),1);
                 err = 0;
             end
@@ -130,7 +123,7 @@ classdef ArteryStrip < Artery
             plot(obj.V.timeVec,obj.V.PisomVec*1e3);
             grid on; ylim([0 (ceil(max(obj.V.PisomVec*1e3))+10)]); xlim([0 obj.TotalTime]);
             ylabel('Pisom (kPa)'); xlabel('time (min)');
-            title(['lt=' num2str(obj.cs.lt)]);
+            title(['lt=' num2str(obj.cs.ltNum)]);
             
             figure(2);
             plot(obj.V.timeVec,obj.V.stretchVec);

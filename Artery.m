@@ -187,6 +187,7 @@ classdef Artery < handle
             if ufsdot<0
                 obj.cs.ufs = obj.cs.ufs + ufsdot*obj.dt; %#ok<*MCNPN>
             end
+            obj.cs.I4SMCeNum = obj.I4SMCe;
             
             obj.cs.lr = strain(1,:);
             obj.cs.lt = strain(2,:);
