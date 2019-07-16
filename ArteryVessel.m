@@ -4,7 +4,7 @@ classdef ArteryVessel < Artery
         TotalTime = 15; %Minutes
     end
     methods
-        %Radius and etc.
+        %Length Dimensions Functions 
         function Ri = Ri(obj)
             Ri = obj.Ro-obj.H0; % inner radii
         end
@@ -73,11 +73,7 @@ classdef ArteryVessel < Artery
                 
                 obj.cs.lrNum = obj.lr;
                 obj.cs.ltNum = obj.lt;
-                obj.cs.lzNum = obj.lz;
                 
-                if obj.cs.ufs == 0 %If ufs doesn't exists - calculate numeric values by I4SMCe=1
-                    obj.cs.ufs = sqrt( (obj.cs.lrNum.^2)*power(sin(obj.thetaSMC),2) + (obj.cs.ltNum.^2)*power(cos(obj.thetaSMC),2) );
-                end
                 %Update r, ri and R to sym values
                 obj.cs.r = obj.cs.x;
                 obj.cs.ri = obj.cs.riG;
@@ -111,6 +107,8 @@ classdef ArteryVessel < Artery
         
         function [err] = InitialParameters(obj)
             obj.nCalc;
+            
+            %2nd Step - Calculate Passive State
             obj.cs.ri = obj.cs.riG;
             
             obj.xw;
@@ -121,21 +119,25 @@ classdef ArteryVessel < Artery
             obj.cs.lt = obj.lt;
             obj.cs.lz = obj.lz;
             
+            obj.cs.lzNum = obj.lz;
+            
             obj.sECM;
-            obj.cs.sSMC = sym(zeros(size(obj.cs.sECM)));
-            obj.cs.sMMy = sym(zeros(size(obj.cs.sECM)));
+            obj.cs.sSMC = zeros(size(obj.cs.sECM));
+            obj.cs.sMMy = zeros(size(obj.cs.sECM));
             
             if obj.riCalc
                 fprintf('Error calculating ri\n');
                 err = 1;
             else
+                obj.ufs0; %calcs numeric ufs0
                 fprintf('Initial Passive Conditions: ');
-                fprintf('Do=%.3f, lr=%.3f, lt=%.3f, lz=%.3f, detF=%.3f \n',obj.cs.roNum*2e3,obj.cs.lrNum(2),obj.cs.ltNum(2),obj.lz,(obj.cs.lrNum(2)*obj.cs.ltNum(2)*obj.lz));
+                fprintf('Do=%.3f, lr=%.3f, lt=%.3f, lz=%.3f, detF=%.3f \n',obj.cs.roNum*2e3,obj.cs.lrNum(2),obj.cs.ltNum(2),obj.cs.lzNum,(obj.cs.lrNum(2)*obj.cs.ltNum(2)*obj.cs.lzNum));
                 obj.V.InitialVectors(length(obj.V.timeVec),0);
                 err = 0;
             end
         end
         
+        %Myosin Kinteics Functions
         function obj = nCalc(obj)
             function dydt = myode(t,y)
                 k1 = obj.k1t(t);
@@ -170,12 +172,7 @@ classdef ArteryVessel < Artery
             [obj.cs.xNum,obj.cs.wNum] = lgwt(3,obj.cs.riNum,obj.cs.roNum);
         end
         
-        %Some Additional Shortcuts for Results Analysis
-        function ufsfit = ufsfit(obj,r)
-            p = polyfit(obj.xwNum,obj.ufs,1);
-            ufsfit = p(1).*r + p(2);
-        end
-        
+        %Some Additional Shortcuts for Results Analysis       
         function obj = PlotResults(obj)
             figure(1);
             plot(obj.V.timeVec,obj.V.DoVec);
@@ -215,11 +212,11 @@ classdef ArteryVessel < Artery
             ylabel('ufs'); xlabel('time (min)'); grid on; hold off;
             set(h,'Interpreter','latex','fontsize',12);   
 
-%             figure(4);
-%             plot(obj.timeVec./60, (obj.sECMVec+obj.sSMCVec+obj.sMMyVec)*1e3);
-%             h = legend('${\sigma}_{r}$','${\sigma}_{\theta}$','${\sigma}_{z}$');
-%             ylabel('Cauchy Stress (kPa)'); xlabel('time (min)'); grid on;
-%             set(h,'Interpreter','latex','fontsize',12);
+            figure(5);
+            plot(obj.V.timeVec, (obj.V.sECMVec+obj.V.sSMCVec+obj.V.sMMyVec)*1e3);
+            h = legend('$\bar{\sigma}_{r}$','$\bar{\sigma}_{\theta}$','$\bar{\sigma}_{z}$');
+            ylabel('Cauchy Stress (kPa)'); xlabel('time (min)'); grid on;
+            set(h,'Interpreter','latex','fontsize',12);
         end
     end
 end

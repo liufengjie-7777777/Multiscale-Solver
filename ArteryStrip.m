@@ -39,9 +39,6 @@ classdef ArteryStrip < Artery
             else
                 obj.cs.lrNum = double(lrNew);
                 obj.cs.lzNum = obj.lzNum;
-                if obj.cs.ufs == 0
-                    obj.cs.ufs = sqrt( (obj.cs.lrNum.^2)*power(sin(obj.thetaSMC),2) + (obj.cs.ltNum.^2)*power(cos(obj.thetaSMC),2) );
-                end
                 
                 err = 0;
             end
@@ -84,12 +81,11 @@ classdef ArteryStrip < Artery
             obj.cs.sSMC = zeros(3,1);
             obj.cs.sMMy = zeros(3,1);
             
-            %obj.cs.I4SMCe = 1;
-            
             if obj.lrCalc
                 fprintf('Error calculating lr\n');
                 err = 1;
             else
+                obj.ufs0; %calcs numeric ufs0
                 fprintf('Initial Passive Conditions: ');
                 fprintf('lr=%.3f, lt=%.3f, lz=%.3f, det(F)=%.3f \n',obj.cs.lrNum,obj.cs.ltNum,obj.cs.lzNum,(obj.cs.lrNum*obj.cs.ltNum*obj.cs.lzNum));
                 obj.V.InitialVectors(length(obj.V.timeVec),1);
@@ -97,6 +93,7 @@ classdef ArteryStrip < Artery
             end
         end
         
+        %Myosin Kinetics Functions
         function obj = nCalc(obj)
             function dydt = myode(~,y)
                 kM = [-obj.k(1) obj.k(2) 0 obj.k(7)
@@ -111,12 +108,8 @@ classdef ArteryStrip < Artery
             obj.V.nAMpVec = n(:,3); obj.V.nAMVec = n(:,4);
         end
         
+        %Some Additional Shortcuts for Results Analysis  
         function obj = PlotResults(obj)
-%             for i=1:length(obj.sECMVec)
-%                 obj.sECMVec(i,:) = double(subs(obj.sECMVec(i,:),obj.stretchVec(i,1)));
-%                 obj.sSMCVec(i,:) = double(subs(obj.sSMCVec(i,:),obj.stretchVec(i,1)));
-%                 obj.sMMyVec(i,:) = double(subs(obj.sMMyVec(i,:),obj.stretchVec(i,1)));
-%             end
             pVec = obj.V.sECMVec(:,1) + obj.V.sSMCVec(:,1) + obj.V.sMMyVec(:,1);
             
             figure(1);

@@ -1,7 +1,5 @@
 classdef SimulationVectors < handle
-    %UNTITLED2 Summary of this class goes here
-    %   Detailed explanation goes here
-    
+    %SimulationVectors contains the variables calculated during simulation
     properties
         %Both Simulations
         ufsVec
@@ -44,7 +42,6 @@ classdef SimulationVectors < handle
         end
         
         function obj = UpdateVectors(obj,i,cs)
-            
             if length(cs.lrNum)==1
                 j = 1;
                 symVar = cs.lrG;

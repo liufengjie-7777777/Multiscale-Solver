@@ -5,8 +5,8 @@ classdef CurrentState < handle
         ltG = 1.69;
         
         %Biaxial
-        riG = sym('ri','positive'); %Inner Radius
-        Pin = 90*133.322387415*1e-6; %Inner Pressure
+        riG = sym('ri','positive'); %Inner radius
+        Pin = 90*133.322387415*1e-6; %Inner pressure
         lambda = 1.5;
         
         r

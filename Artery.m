@@ -174,6 +174,10 @@ classdef Artery < handle
                 end
             end
         end
+        function obj = ufs0(obj)
+            %calcs numeric ufs values by I4SMCe=1
+            obj.cs.ufs = sqrt( (obj.cs.lrNum.^2)*power(sin(obj.thetaSMC),2) + (obj.cs.ltNum.^2)*power(cos(obj.thetaSMC),2) );
+        end
         function obj = ufsUpdate(obj)
             strain = vertcat(obj.cs.lr,obj.cs.lt,sym(ones(1,length(obj.cs.lt))*obj.lz));
             obj.cs.lr = obj.cs.lrNum;
@@ -187,6 +191,7 @@ classdef Artery < handle
             if ufsdot<0
                 obj.cs.ufs = obj.cs.ufs + ufsdot*obj.dt; %#ok<*MCNPN>
             end
+            %Save numeric I4SMCe value for uniaxial Pisom calc
             obj.cs.I4SMCeNum = obj.I4SMCe;
             
             obj.cs.lr = strain(1,:);
