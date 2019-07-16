@@ -1,4 +1,4 @@
-clear variables; close all; clc;
+clear all; close all; clc; %#ok<CLALL>
 
 %Define a as artrey and calc n
 if input('Which experiment do you want to simulate?\nEnter 1 for biaxial and 0 for uniaxial: ')
@@ -9,6 +9,8 @@ else
     a = ArteryStrip;
     a.cs.ltG = 1.69; %Circumferential stretch ratio
 end
+
+a.alphaPS = 25*pi/180;
 
 err = a.InitialParameters;
 if err

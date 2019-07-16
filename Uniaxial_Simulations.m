@@ -1,14 +1,15 @@
 clear all; close all; clc; %#ok<CLALL>
 
-lt = [1.4 1.6]; %0.5:0.1:2;
+lt = 1:0.1:2;
+Pisom = zeros(1,length(lt));
 
-Pisom = zeros(length(lt),1);
+%Define a as artrey
+a = ArteryStrip;
+a.alphaPS = 25*pi/180;
 
 for j=1:length(lt)
-    %Define a as artrey and calc n
-    a = ArteryStrip;
     a.cs.ltG = lt(j); %Circumferential stretch ratio
-    a.cs.lrNum = 0;
+    a.cs.lrNum = 0; 
     
     err = a.InitialParameters;
     if err
@@ -34,4 +35,10 @@ for j=1:length(lt)
     end
 end
 
-plot(lt,Pisom);
+N = 3;
+p = polyfit(lt(N:end),Pisom(N:end),2);
+xq = linspace(lt(N),lt(end),100);
+yq = polyval(p,xq);
+plot(lt(N:end),Pisom(N:end),'x',xq,yq);
+ylabel('Steady State Pisom (kPa)'); xlabel('\lambda_\theta');
+ylim([0 25]);
