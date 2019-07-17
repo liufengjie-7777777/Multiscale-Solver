@@ -124,7 +124,7 @@ classdef Artery < handle
         function obj = LMi(obj)
             obj.dMAiMA0;
         	obj.cs.LMr = obj.LMmax*(1-obj.kqp*obj.cs.dMArMA0); obj.cs.LMr(subs(obj.cs.LMr,obj.cs.lrNum)<0) = 0;
-        	obj.cs.LMz = obj.LMmax*(1-obj.kqp*obj.cs.dMAzMA0); obj.cs.LMz(subs(obj.cs.LMz,obj.cs.lrNum)<0) = 0;
+        	obj.cs.LMz = obj.LMmax*(1-obj.kqp*obj.cs.dMAzMA0); obj.cs.LMz(obj.cs.LMz<0) = 0;
         end
         function obj = Lfoi(obj)
             obj.LMi;
@@ -141,6 +141,7 @@ classdef Artery < handle
                 end
                 dMAi = dMAiMA0*obj.dMA0;
                 
+                x2cit = zeros(1,length(dMAi)); y2cit = x2cit;
                 eS2x = zeros(1,length(dMAi)); eS2y = eS2x;
                 for j=1:length(dMAi)
                     if dMAiMA0(j) < 1
@@ -157,7 +158,9 @@ classdef Artery < handle
 
                         x2ci = x2i + LLAi.*sin(obj.alphaPS);
                         y2ci = dMAi(j) - obj.lMD - LLAi.*cos(obj.alphaPS);
-
+                        
+                        x2cit(1,j) = x2ci; y2cit(1,j) = y2ci;
+                        
                         eS2x(1,j) = (x2ci./sqrt(x2i.^2 + y2i.^2))*(1 - sqrt((x2i.^2 + y2i.^2)/(x2ci.^2 + y2ci.^2)));
                         eS2y(1,j) = (y2ci./sqrt(x2i.^2 + y2i.^2))*(1 - sqrt((x2i.^2 + y2i.^2)/(x2ci.^2 + y2ci.^2)));
                     else
@@ -168,9 +171,15 @@ classdef Artery < handle
                 if i==1
                     obj.cs.eS2xr = eS2x;
                     obj.cs.eS2yr = eS2y;
+                    
+                    obj.cs.x2cr = x2cit;
+                    obj.cs.y2cr = y2cit;
                 else
                     obj.cs.eS2xz = eS2x;
                     obj.cs.eS2yz = eS2y;
+                    
+                    obj.cs.x2cz = x2cit;
+                    obj.cs.y2cz = y2cit;
                 end
             end
         end
@@ -197,7 +206,10 @@ classdef Artery < handle
             obj.cs.lr = strain(1,:);
             obj.cs.lt = strain(2,:);
             obj.cs.lz = strain(3,:);
+            
+            %obj.Lfoi; %To use symbolic values of these variables
         end
+        
         %Stress Functions(:,1)-r (:,2)-theta (:,3)-z
         function obj = sECM(obj)
             aj = obj.alphaj(1:4);

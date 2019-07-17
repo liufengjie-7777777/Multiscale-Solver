@@ -46,8 +46,8 @@ classdef ArteryStrip < Artery
         
         function err = stepCalc(obj,i)
             %Current Step Myosin Fractions
-            obj.cs.nAMp = obj.V.nAMpVec(i);
-            obj.cs.nAM = obj.V.nAMVec(i);
+            obj.cs.nAMp = obj.V.nAMp(i);
+            obj.cs.nAM = obj.V.nAM(i);
             
             obj.ufsUpdate;
             
@@ -61,8 +61,8 @@ classdef ArteryStrip < Artery
                 obj.Pisom;
                 
                 obj.V.UpdateVectors(i,obj.cs);
-                fprintf('| Pisom=%.2f kPa | ',obj.V.PisomVec(i)*1e3);
-                fprintf('lr=%.3f, lt=%.3f, lz=%.3f | ',obj.V.stretchVec(i,1:3));
+                fprintf('| Pisom=%.2f kPa | ',obj.V.Pisom(i)*1e3);
+                fprintf('lr=%.3f, lt=%.3f, lz=%.3f | ',obj.V.stretch(i,1:3));
                 err = 0;
             end    
         end
@@ -88,7 +88,7 @@ classdef ArteryStrip < Artery
                 obj.ufs0; %calcs numeric ufs0
                 fprintf('Initial Passive Conditions: ');
                 fprintf('lr=%.3f, lt=%.3f, lz=%.3f, det(F)=%.3f \n',obj.cs.lrNum,obj.cs.ltNum,obj.cs.lzNum,(obj.cs.lrNum*obj.cs.ltNum*obj.cs.lzNum));
-                obj.V.InitialVectors(length(obj.V.timeVec),1);
+                obj.V.InitialVectors(length(obj.V.time),1);
                 err = 0;
             end
         end
@@ -104,37 +104,37 @@ classdef ArteryStrip < Artery
             end
             [time, n] = ode15s(@(t,y) myode(t,y),0:obj.dt:obj.TotalTime*60,[1 0 0 0]);
             
-            obj.V.timeVec = time./60;
-            obj.V.nAMpVec = n(:,3); obj.V.nAMVec = n(:,4);
+            obj.V.time = time./60;
+            obj.V.nAMp = n(:,3); obj.V.nAM = n(:,4);
         end
         
         %Some Additional Shortcuts for Results Analysis  
         function obj = PlotResults(obj)
-            pVec = obj.V.sECMVec(:,1) + obj.V.sSMCVec(:,1) + obj.V.sMMyVec(:,1);
+            p = obj.V.sECM(:,1) + obj.V.sSMC(:,1) + obj.V.sMMy(:,1);
             
             figure(1);
-            plot(obj.V.timeVec,obj.V.PisomVec*1e3);
-            grid on; ylim([0 (ceil(max(obj.V.PisomVec*1e3))+10)]); xlim([0 obj.TotalTime]);
+            plot(obj.V.time,obj.V.Pisom*1e3);
+            grid on; ylim([0 (ceil(max(obj.V.Pisom*1e3))+10)]); xlim([0 obj.TotalTime]);
             ylabel('Pisom (kPa)'); xlabel('time (min)');
             title(['lt=' num2str(obj.cs.ltNum)]);
             
             figure(2);
-            plot(obj.V.timeVec,obj.V.stretchVec);
+            plot(obj.V.time,obj.V.stretch);
             grid on; ylim([0 2]); xlim([0 obj.TotalTime]);
             ylabel('Stretch Ratio'); xlabel('time (min)');
             legend('\lambda_r','\lambda_\theta','\lambda_z','det(F)');
             
             figure(3);
-            plot(obj.V.timeVec,obj.V.PMMCUVec*1e3);
+            plot(obj.V.time,obj.V.PMMCU*1e3);
             ylabel('Stress (kPa)'); ylim([0 50]);
             hold on; yyaxis right;
-            plot(obj.V.timeVec,obj.V.ufsVec);
+            plot(obj.V.time,obj.V.ufs);
             h = legend('$P_{MM}$','$P_{CU}$','$\bar{u}_{fs}$ (right axis)');
             ylabel('ufs'); xlabel('time (min)'); grid on; hold off;
             set(h,'Interpreter','latex','fontsize',12);
             
             figure(4);
-            plot(obj.V.timeVec, (obj.V.sECMVec+obj.V.sSMCVec+obj.V.sMMyVec-pVec)*1e3);
+            plot(obj.V.time, (obj.V.sECM+obj.V.sSMC+obj.V.sMMy-p)*1e3);
             h = legend('${\sigma}_{r}$','${\sigma}_{\theta}$','${\sigma}_{z}$');
             ylabel('Cauchy Stress (kPa)'); xlabel('time (min)'); grid on;
             set(h,'Interpreter','latex','fontsize',12);

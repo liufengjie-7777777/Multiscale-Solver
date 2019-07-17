@@ -50,6 +50,11 @@ classdef CurrentState < handle
         eS2xz
         eS2yz
         
+        x2cr
+        x2cz
+        y2cr
+        y2cz
+                
         I4SMCe
         I4SMCeNum
         

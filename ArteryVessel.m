@@ -85,8 +85,8 @@ classdef ArteryVessel < Artery
         
         function err = stepCalc(obj,i)
             %Update current Step Myosin Fractions
-            obj.cs.nAMp = obj.V.nAMpVec(i);
-            obj.cs.nAM = obj.V.nAMVec(i);
+            obj.cs.nAMp = obj.V.nAMp(i);
+            obj.cs.nAM = obj.V.nAM(i);
             %Update ufs (also calculate and save numeric values of
             %dMAiMA0,LMi,Lfoi and eS2)
             obj.ufsUpdate;
@@ -100,7 +100,7 @@ classdef ArteryVessel < Artery
             else
                 obj.V.UpdateVectors(i,obj.cs);
                 
-                fprintf('| Do=%.2f kPa | F_T=%.2f mN | ',obj.V.DoVec(i),obj.V.FTVec(i));
+                fprintf('| Do=%.2f kPa | F_T=%.2f mN | ',obj.V.Do(i),obj.V.FT(i));
                 err = 0;
             end
         end
@@ -132,7 +132,7 @@ classdef ArteryVessel < Artery
                 obj.ufs0; %calcs numeric ufs0
                 fprintf('Initial Passive Conditions: ');
                 fprintf('Do=%.3f, lr=%.3f, lt=%.3f, lz=%.3f, detF=%.3f \n',obj.cs.roNum*2e3,obj.cs.lrNum(2),obj.cs.ltNum(2),obj.cs.lzNum,(obj.cs.lrNum(2)*obj.cs.ltNum(2)*obj.cs.lzNum));
-                obj.V.InitialVectors(length(obj.V.timeVec),0);
+                obj.V.InitialVectors(length(obj.V.time),0);
                 err = 0;
             end
         end
@@ -149,8 +149,8 @@ classdef ArteryVessel < Artery
             end
             [time, n] = ode15s(@(t,y) myode(t,y),0:obj.dt:obj.TotalTime*60,[1 0 0 0]);
             
-            obj.V.timeVec = time./60;
-            obj.V.nAMpVec = n(:,3); obj.V.nAMVec = n(:,4);
+            obj.V.time = time./60;
+            obj.V.nAMp = n(:,3); obj.V.nAM = n(:,4);
         end
         function k1t = k1t(obj,t)
             k1t = obj.k(1)*erfc( obj.hadv/(2*sqrt(obj.DKCL*t)) );
@@ -175,15 +175,15 @@ classdef ArteryVessel < Artery
         %Some Additional Shortcuts for Results Analysis       
         function obj = PlotResults(obj)
             figure(1);
-            plot(obj.V.timeVec,obj.V.DoVec);
-            grid on; ylim([600 1300]); xlim([0 obj.TotalTime]); %ylim([0 (ceil(max(obj.DoVec))+100)]);
+            plot(obj.V.time,obj.V.Do);
+            grid on; ylim([600 1300]); xlim([0 obj.TotalTime]); %ylim([0 (ceil(max(obj.Do))+100)]);
             ylabel('Do (um)'); xlabel('time (min)');
             title(['lz=' num2str(obj.lz) ' Pin=' num2str(obj.cs.Pin/133.322387415*1e6) ' mmHg']);
             
             figure(2);
-            plot(obj.V.timeVec,obj.V.FTVec);
-            minFT = min(obj.V.FTVec);
-            maxFT = max(obj.V.FTVec);
+            plot(obj.V.time,obj.V.FT);
+            minFT = min(obj.V.FT);
+            maxFT = max(obj.V.FT);
             if minFT>2
                 minFT = ceil(minFT-2);
             else
@@ -198,22 +198,22 @@ classdef ArteryVessel < Artery
             ylabel('F_T (mN)'); xlabel('time (min)');
             
             figure(3);
-            plot(obj.V.timeVec,obj.V.stretchVec);
+            plot(obj.V.time,obj.V.stretch);
             grid on; ylim([0 2]); xlim([0 obj.TotalTime]);
             ylabel('Stretch Ratio'); xlabel('time (min)');
             legend('\lambda_r','\lambda_\theta','\lambda_z','det(F)');
 
             figure(4);
-            plot(obj.V.timeVec,obj.V.PMMCUVec*1e3);
-            ylabel('Stress (kPa)'); ylim([0 ceil(max(obj.V.PMMCUVec*1e3,[],'all')+10)]);
+            plot(obj.V.time,obj.V.PMMCU*1e3);
+            ylabel('Stress (kPa)'); ylim([0 ceil(max(obj.V.PMMCU*1e3,[],'all')+10)]);
             hold on; yyaxis right;
-            plot(obj.V.timeVec,obj.V.ufsVec);
+            plot(obj.V.time,obj.V.ufs);
             h = legend('$P_{MM}$','$P_{CU}$','$\bar{u}_{fs}$ (right axis)');
             ylabel('ufs'); xlabel('time (min)'); grid on; hold off;
             set(h,'Interpreter','latex','fontsize',12);   
 
             figure(5);
-            plot(obj.V.timeVec, (obj.V.sECMVec+obj.V.sSMCVec+obj.V.sMMyVec)*1e3);
+            plot(obj.V.time, (obj.V.sECM+obj.V.sSMC+obj.V.sMMy)*1e3);
             h = legend('$\bar{\sigma}_{r}$','$\bar{\sigma}_{\theta}$','$\bar{\sigma}_{z}$');
             ylabel('Cauchy Stress (kPa)'); xlabel('time (min)'); grid on;
             set(h,'Interpreter','latex','fontsize',12);
