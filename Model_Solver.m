@@ -10,8 +10,6 @@ else
     a.cs.ltG = 1.69; %Circumferential stretch ratio
 end
 
-a.LMmax = 0.5e-3;
-
 if ~a.InitialParameters
     SamplePoints = length(a.V.time);
     %Active Simulation
