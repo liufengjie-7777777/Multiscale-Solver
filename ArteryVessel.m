@@ -235,7 +235,7 @@ classdef ArteryVessel < Artery
                 obj.cs.lt = lt;
                 obj.cs.lz = obj.lz;
                 ufs = obj.cs.ufs;
-                obj.cs.ufs = obj.V.ufs(N-1,:);
+                obj.cs.ufs = obj.V.ufsN(N-1,:);
                 
                 obj.Lfoi;
                 obj.eS2;
