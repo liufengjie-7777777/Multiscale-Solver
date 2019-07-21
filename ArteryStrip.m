@@ -62,7 +62,7 @@ classdef ArteryStrip < Artery
                 
                 obj.V.UpdateVectors(i,obj.cs);
                 fprintf('| Pisom=%.2f kPa | ',obj.V.Pisom(i)*1e3);
-                fprintf('lr=%.3f, lt=%.3f, lz=%.3f | ',obj.V.stretch(i,1:3));
+                fprintf('lr=%.3f, lt=%.3f, lz=%.3f | ',obj.cs.lrNum,obj.cs.ltNum,obj.cs.lzNum);
                 err = 0;
             end    
         end

@@ -15,6 +15,7 @@ classdef SimulationVectors < handle
         
         %Uniaxial Simulation
         Pisom
+        lr
         
         dMAiMA0
         LMi
@@ -25,6 +26,8 @@ classdef SimulationVectors < handle
         y2c
         
         %Biaxial Simulation
+        ufsN
+        ri
         Do
         FT
     end
@@ -49,8 +52,12 @@ classdef SimulationVectors < handle
             obj.y2c = zeros(SamplePoints,2);
             
             if Sim %Uni
-                obj.Pisom = zeros(SamplePoints,1);               
+                obj.ufs = zeros(SamplePoints,1);
+                obj.Pisom = zeros(SamplePoints,1);
+                obj.lr = zeros(SamplePoints,1);       
             else %Bi
+                obj.ufs = zeros(SamplePoints,1);
+                obj.ri = zeros(SamplePoints,1);
                 obj.Do = zeros(SamplePoints,1);
                 obj.FT = zeros(SamplePoints,1);
             end
@@ -67,18 +74,21 @@ classdef SimulationVectors < handle
                 numVar = cs.riNum;
             end
             
-            lr = cs.lrNum(j);
+            lrt = cs.lrNum(j);
             lt = cs.ltNum(j);
             lz = cs.lzNum;
             
             obj.ufs(i,:) = cs.ufs(j);
-            obj.stretch(i,:) = [lr,lt,lz, (lr*lt*lz)];
+            obj.stretch(i,:) = [lrt,lt,lz, (lrt*lt*lz)];
             obj.sECM(i,:) = subs(cs.sECM(:,j),symVar,numVar);
             obj.sSMC(i,:) = subs(cs.sSMC(:,j),symVar,numVar);
             obj.sMMy(i,:) = subs(cs.sMMy(:,j),symVar,numVar);
             obj.PMMCU(i,:) = subs([cs.PMM(j),cs.PCU(j)],symVar,numVar);
 
             if ~isempty(obj.Pisom)
+                obj.ufs(i,:) = cs.ufs;
+                obj.lr(i,:) = cs.lrNum;  
+                
                 obj.Pisom(i) = cs.Pisom;
                 obj.dMAiMA0(i,:) = [cs.dMArMA0,cs.dMAzMA0];
                 obj.LMi(i,:) = [cs.LMr,cs.LMz];
@@ -89,6 +99,7 @@ classdef SimulationVectors < handle
             end
             
             if ~isempty(obj.Do)
+                obj.ri(i) = cs.riNum;
             	obj.Do(i) = cs.roNum*2e3;
             	obj.FT(i) = cs.FT*1e3;
                 
@@ -96,8 +107,8 @@ classdef SimulationVectors < handle
                 obj.LMi(i,:) = [cs.LMr(2),cs.LMz];
                 obj.Lfoi(i,:) = [cs.Lfor(2),cs.Lfoz(2)];
                 obj.eS2(i,:) = [cs.eS2xr(2),cs.eS2yr(2),cs.eS2xz,cs.eS2yz];
-                obj.x2c(i,:) = [cs.x2cr(2),cs.x2cz(2)];
-                obj.y2c(i,:) = [cs.y2cr(2),cs.y2cz(2)];
+                obj.x2c(i,:) = [cs.x2cr(2),cs.x2cz];
+                obj.y2c(i,:) = [cs.y2cr(2),cs.y2cz];
             end
         end
     end

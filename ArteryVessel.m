@@ -99,7 +99,7 @@ classdef ArteryVessel < Artery
                 err = 1;
             else
                 obj.V.UpdateVectors(i,obj.cs);
-                
+                obj.ufsVecUpdate(i);
                 fprintf('| Do=%.2f kPa | F_T=%.2f mN | ',obj.V.Do(i),obj.V.FT(i));
                 err = 0;
             end
@@ -130,6 +130,7 @@ classdef ArteryVessel < Artery
                 err = 1;
             else
                 obj.ufs0; %calcs numeric ufs0
+                obj.ufsVecUpdate(1);
                 fprintf('Initial Passive Conditions: ');
                 fprintf('Do=%.3f, lr=%.3f, lt=%.3f, lz=%.3f, detF=%.3f \n',obj.cs.roNum*2e3,obj.cs.lrNum(2),obj.cs.ltNum(2),obj.cs.lzNum,(obj.cs.lrNum(2)*obj.cs.ltNum(2)*obj.cs.lzNum));
                 obj.V.InitialVectors(length(obj.V.time),0);
@@ -217,6 +218,45 @@ classdef ArteryVessel < Artery
             h = legend('$\bar{\sigma}_{r}$','$\bar{\sigma}_{\theta}$','$\bar{\sigma}_{z}$');
             ylabel('Cauchy Stress (kPa)'); xlabel('time (min)'); grid on;
             set(h,'Interpreter','latex','fontsize',12);
+        end
+        
+        function ufsVecUpdate(obj,N)
+            r = linspace(obj.cs.riNum,obj.cs.roNum,31);
+            
+            R = sqrt( ((pi*obj.lz)/(pi-obj.phi0/2)) .* (r.^2-obj.cs.riNum.^2) + obj.Ri^2  );
+            lt = (pi/(pi-obj.phi0/2)).*(r./R);
+            lr = 1./(lt.*obj.lz);
+            
+            if N<2
+                obj.V.ufsN(1,:) = sqrt( (lr.^2)*power(sin(obj.thetaSMC),2) + (lt.^2)*power(cos(obj.thetaSMC),2) );
+            else
+                strain = vertcat(obj.cs.lr,obj.cs.lt);
+                obj.cs.lr = lr;
+                obj.cs.lt = lt;
+                obj.cs.lz = obj.lz;
+                ufs = obj.cs.ufs;
+                obj.cs.ufs = obj.V.ufs(N-1,:);
+                
+                obj.Lfoi;
+                obj.eS2;
+                
+                ufsdot = double(obj.beta*(obj.PCU-obj.PMM));
+                if ufsdot<0
+                    obj.V.ufsN(N,:) = obj.V.ufsN(N-1,:) + ufsdot*obj.dt; %#ok<*MCNPN>
+                end
+                
+                obj.cs.lr = obj.cs.lrNum;
+                obj.cs.lt = obj.cs.ltNum;
+                obj.cs.ufs = ufs;
+                
+                obj.Lfoi;
+                obj.eS2;
+                obj.PCU;
+                obj.PMM;
+                
+                obj.cs.lr = strain(1,:);
+                obj.cs.lt = strain(2,:);
+            end
         end
     end
 end
