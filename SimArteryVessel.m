@@ -66,19 +66,22 @@ classdef SimArteryVessel < SimArtery
             s = obj.sECM + obj.sSMC + obj.sMMy;
             Srbar = s(1);
             
-            [x,w] = obj.xw(r);
-            obj.Lfoi(x);
-            obj.eS2;
-            
-            obj.sECMCalc(x);
-            obj.sSMCCalc(x);
-            obj.sMMyCalc(x);
-            
-            s = obj.sECM + obj.sSMC + obj.sMMy;
-            Sr = s(1,:);
-            St = s(2,:);
-            
-            p = double(obj.Pin + Srbar - sum( (St-Sr)./x.*w));
+            if r > obj.ri
+                [x,w] = obj.xw(r);
+                obj.Lfoi(x);
+                obj.eS2;
+
+                obj.sECMCalc(x);
+                obj.sSMCCalc(x);
+                obj.sMMyCalc(x);
+
+                s = obj.sECM + obj.sSMC + obj.sMMy;
+                Sr = s(1,:);
+                St = s(2,:);
+                p = double(obj.Pin + Srbar - sum( (St-Sr)./x.*w));
+            else
+                p = double(obj.Pin + Srbar);
+            end
         end
         
         function [p,S] = CauchyStress(obj,r)
@@ -92,6 +95,7 @@ classdef SimArteryVessel < SimArtery
             obj.sMMyCalc(r);
             
             Sbar = double(obj.sECM + obj.sSMC + obj.sMMy);
+            
             S = -p + Sbar;
         end
         

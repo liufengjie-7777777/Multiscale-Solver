@@ -262,5 +262,47 @@ classdef SimArtery < handle
         function ufs = ufsFit(obj,r)
             ufs = interp1(linspace(obj.ri,obj.ro,length(obj.ufs)),obj.ufs,r);
         end
+        
+        function obj = UpdateParameters(obj,a)
+            %Stress Free Parameters
+            obj.L0 = a.L0;
+            obj.Ro = a.Ro;
+            obj.H0 = a.H0;
+            obj.phi0 = a.phi0;
+            obj.Deltaz = a.Deltaz;
+
+            %Passive ECM and Collagen Parameters
+            obj.Cp = a.Cp;
+            obj.c = a.c;
+            obj.alpha1 = a.alpha1;
+            obj.alpha4 = a.alpha4;
+
+            %SMC Parameters
+            obj.alphaPS = a.alphaPS;
+            obj.lMD = a.lMD;
+            obj.LLA0 = a.LLA0;
+            obj.LS20 = a.LS20;
+            obj.AS2 = a.AS2;
+            obj.deltam = a.deltam;
+            obj.LMmax = a.LMmax;
+            obj.dMA0 = a.dMA0;
+            obj.NCU = a.NCU;
+            obj.NCF = a.NCF;
+            obj.ltOpt = a.ltOpt;
+            obj.thetaSMC = a.thetaSMC;
+            obj.k = a.k;
+            
+            %Parameters Obtained by Fitting Contraction Data (Table 2)
+            obj.beta = a.beta;
+            obj.EAMp = a.EAMp;
+            obj.EAM = a.EAM;
+            obj.kMAi = a.kMAi;
+            obj.cfo = a.cfo;
+            obj.ufoOpt = a.ufoOpt;
+            obj.kqp = a.kqp;
+            obj.gammar = a.gammar;
+            obj.DKCL = a.DKCL;
+            obj.lzOpt = a.lzOpt;
+        end
     end
 end
