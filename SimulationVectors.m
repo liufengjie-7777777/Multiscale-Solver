@@ -56,6 +56,7 @@ classdef SimulationVectors < handle
                 obj.Pisom = zeros(SamplePoints,1);
                 obj.lr = zeros(SamplePoints,1);       
             else %Bi
+                obj.ufsN = zeros(SamplePoints,31);
                 obj.ufs = zeros(SamplePoints,1);
                 obj.ri = zeros(SamplePoints,1);
                 obj.Do = zeros(SamplePoints,1);

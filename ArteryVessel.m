@@ -2,6 +2,7 @@ classdef ArteryVessel < Artery
     properties
         dt = 1; %Seconds
         TotalTime = 15; %Minutes
+        PrintProgress = 1;
     end
     methods
         %Length Dimensions Functions 
@@ -100,12 +101,16 @@ classdef ArteryVessel < Artery
             else
                 obj.V.UpdateVectors(i,obj.cs);
                 obj.ufsVecUpdate(i);
-                fprintf('| Do=%.2f kPa | F_T=%.2f mN | ',obj.V.Do(i),obj.V.FT(i));
+                if obj.PrintProgress
+                    fprintf('| Do=%.2f kPa | F_T=%.2f mN | ',obj.V.Do(i),obj.V.FT(i));
+                end
                 err = 0;
             end
         end
         
         function [err] = InitialParameters(obj)
+            obj.cs.riNum = 0;
+            
             obj.nCalc;
             
             %2nd Step - Calculate Passive State

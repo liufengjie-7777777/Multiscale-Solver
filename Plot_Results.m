@@ -1,7 +1,9 @@
 %Plot Results
 
 %%Analyze biaxial Simulation
+load Simulation-alphaPS(2);
 b = SimArteryVessel;
+
 %Update material parameters that changed
 b.UpdateParameters(a);
 
@@ -11,11 +13,34 @@ b.ufsVec = a.V.ufsN;
 b.nAMpVec = a.V.nAMp;
 b.nAMVec = a.V.nAM;
 b.timeVec = a.V.time;
-%%
 
+%%
+%Plot Do and FT as a function of time
+Do = zeros(length(b.timeVec),1);
+FT = zeros(length(b.timeVec),1);
+for i=1:length(b.timeVec)
+    b.ri = b.riVec(i);
+    b.ufs = b.ufsVec(i,:);
+    b.nAMp = b.nAMpVec(i);
+    b.nAM = b.nAMVec(i);
+    
+    Do(i) = b.ro*2e3; %um
+    FT(i) = b.FTCalc*1e3; %mN
+end
+
+figure();
+subplot(1,2,1);
+plot(b.timeVec,Do);
+ylabel('Do (\mum)'); xlabel('time (min)');
+ylim(limCalc(Do,[0.5 1.2],0));
+subplot(1,2,2);
+plot(b.timeVec,FT);
+ylabel('F_T (mN)'); xlabel('time (min)');
+ylim(limCalc(FT,[0.7 1.3],0));
+%%
 %Plot Cauchy stress as a function of normalized radii and time
 %(currently passive and steady-state active)
-N = round(linspace(1,length(b.riVec),50)); %[1,length(b.riVec)]; %
+N = round(linspace(1,length(b.riVec),10)); %[1,length(b.riVec)]; %
 p = zeros(20,length(N));
 S = zeros(20,length(N),3);
 for i=1:length(N)
@@ -154,31 +179,19 @@ for k=1:2 %1-r and 2-z direction
     subplot(2,2,1);
     plot(b.timeVec,dMAiMA0); title([strdMAiMA0{k} ' vs time']);
     ylabel(strdMAiMA0{k}); xlabel('time (min)');
-    lim = [round(95*min(dMAiMA0,[],'all'))/100 round(105*max(dMAiMA0,[],'all'))/100];
-    if lim(2) > lim(1)
-        ylim(lim);
-    end
+    ylim(limCalc(dMAiMA0,[0.9 1.05],2));
     subplot(2,2,2);
     plot(b.timeVec,LMi*1e3);  title([strLMi{k} ' vs time']);
     ylabel([strLMi{k} ' (\mum)']); xlabel('time (min)');
-    lim = [round(95*min(LMi,[],'all'))/100 round(105*max(LMi,[],'all'))/100];
-    if lim(2) > lim(1)
-        ylim(lim);
-    end
+    ylim(limCalc(LMi,[0.9 1.02],2));
     subplot(2,2,3);
     plot(b.timeVec,Lfoi); title([strLfoi{k} ' vs time']);
     ylabel(strLfoi{k}); xlabel('time (min)');
-    lim = [round(95*min(Lfoi,[],'all'))/100 round(105*max(Lfoi,[],'all'))/100];
-    if lim(2) > lim(1)
-        ylim(lim);
-    end
+    ylim(limCalc(Lfoi,[0.9 1.02],2));
     subplot(2,2,4);
     strDir = ['r','z'];
     plot(b.timeVec,[eS2i(:,1,1), eS2i(:,1,2)]); title([streS2i{k} ' vs time']);
     legend(['\epsilon_{S2x,' strDir(k) '}'],['\epsilon_{S2y,' strDir(k) '}']);
     ylabel(streS2i{k}); xlabel('time (min)');
-    lim = [round(95*min(eS2i,[],'all'))/100 round(105*max(eS2i,[],'all'))/100];
-    if lim(2) > lim(1)
-        ylim(lim);
-    end
+    ylim(limCalc(eS2i,[0.9 1.1],2));
 end
