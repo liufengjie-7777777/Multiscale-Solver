@@ -1,7 +1,7 @@
 %Plot Results
 
 %%Analyze biaxial Simulation
-load Simulation-alphaPS(2);
+load Simulation-alphaPS(1);
 b = SimArteryVessel;
 
 %Update material parameters that changed
@@ -28,7 +28,8 @@ for i=1:length(b.timeVec)
     FT(i) = b.FTCalc*1e3; %mN
 end
 
-figure();
+%figure();
+hold on;
 subplot(1,2,1);
 plot(b.timeVec,Do);
 ylabel('Do (\mum)'); xlabel('time (min)');
@@ -37,7 +38,52 @@ subplot(1,2,2);
 plot(b.timeVec,FT);
 ylabel('F_T (mN)'); xlabel('time (min)');
 ylim(limCalc(FT,[0.7 1.3],0));
+hold off;
 %%
+
+%Plot Do and FT as a function of time for multiple simulations
+N = 4; %number of files to open
+
+b = SimArteryVessel;
+Do = zeros(length(b.timeVec),N);
+FT = zeros(length(b.timeVec),N);
+for n=1:4
+    load(['Simulation-alphaPS(' num2str(n) ')']); %open file name
+    
+    %Update material parameters that changed
+    b.UpdateParameters(a);
+    strLegend{n} = ['\alpha_{PS} = ' num2str(b.alphaPS*180/pi) '^o'];
+    
+    %Update vectors
+    b.riVec = a.V.ri;
+    b.ufsVec = a.V.ufsN;
+    b.nAMpVec = a.V.nAMp;
+    b.nAMVec = a.V.nAM;
+    b.timeVec = a.V.time;
+    
+    for i=1:length(b.timeVec)
+        b.ri = b.riVec(i);
+        b.ufs = b.ufsVec(i,:);
+        b.nAMp = b.nAMpVec(i);
+        b.nAM = b.nAMVec(i);
+        
+        Do(i,n) = b.ro*2e3; %um
+        FT(i,n) = b.FTCalc*1e3; %mN
+    end
+end
+figure();
+subplot(1,2,1);
+plot(b.timeVec,Do);
+ylabel('Do (\mum)'); xlabel('time (min)');
+ylim(limCalc(Do,[0.5 1.2],0));
+legend(strLegend);
+subplot(1,2,2);
+plot(b.timeVec,FT);
+ylabel('F_T (mN)'); xlabel('time (min)');
+ylim(limCalc(FT,[0.7 1.3],0));
+legend(strLegend);
+%%
+
 %Plot Cauchy stress as a function of normalized radii and time
 %(currently passive and steady-state active)
 N = round(linspace(1,length(b.riVec),10)); %[1,length(b.riVec)]; %
