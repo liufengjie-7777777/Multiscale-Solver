@@ -47,6 +47,7 @@ N = 4; %number of files to open
 b = SimArteryVessel;
 Do = zeros(length(b.timeVec),N);
 FT = zeros(length(b.timeVec),N);
+strLegend = strings(1,N);
 for n=1:4
     load(['Simulation-alphaPS(' num2str(n) ')']); %open file name
     
