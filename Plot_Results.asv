@@ -47,23 +47,20 @@ hold off;
 %%
 
 %Plot Do and FT as a function of time for multiple simulations
-fileName = 'LMmax'; varName = 'L_{Mmax}';
-N = 1; n = 0;
 while N
     try
-        n = n+1;
         load(['Simulation-' fileName '(' num2str(n) ')']);
     catch
-        N = 0;
+        
     end
-end
-N = n-1;
+N = 1; n = 1;
 
+fileName = 'LS20'; varName = 'L_{S2,0}';
 b = SimArteryVessel;
 Do = zeros(length(b.timeVec),N);
 FT = zeros(length(b.timeVec),N);
 strLegend = strings(1,N);
-for n=1:N
+for n=n:N
     %open file
     load(['Simulation-' fileName '(' num2str(n) ')']);
 

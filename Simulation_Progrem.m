@@ -11,18 +11,21 @@ else
     a.cs.ltG = 1.69; %Circumferential stretch ratio
 end
 
-alphaPS = linspace(0.8,1.4,4)*a.alphaPS;
+varName = 'LMmax';
+varUnits = 'nm'; varUnitConvertion = 1e6;
+
+SimVariable = linspace(0.8,1.4,4)*a.(varName);
 a.PrintProgress = 0;
 
 if ~a.InitialParameters
 	SamplePoints = length(a.V.time);
-    ufs = zeros(SamplePoints,31,length(alphaPS));
-    ri = zeros(SamplePoints,length(alphaPS));
+    ufs = zeros(SamplePoints,31,length(SimVariable));
+    ri = zeros(SamplePoints,length(SimVariable));
 end
 
-for n=1:length(alphaPS)
-    a.alphaPS = alphaPS(n);
-    fprintf('(%d) Now simulating alpha_PS=%.2f\n',n,alphaPS(n)*180/pi);
+for n=1:length(SimVariable)
+    a.(varName) = SimVariable(n);
+    fprintf('(%d) Now simulating %s = %.2f (%s)\n',n,varName,SimVariable(n)*varUnitConvertion,varUnits);
     if ~a.InitialParameters
         SamplePoints = length(a.V.time);
         %Active Simulation
@@ -45,6 +48,6 @@ for n=1:length(alphaPS)
         ufs(:,:,n) = a.V.ufsN;
         ri(:,n) = a.V.ri;
         
-        save(['Simulation-alphaPS(' num2str(n) ').mat'],'a');
+        save(['Simulation-' varName '(' num2str(n) ').mat'],'a');
     end
 end
