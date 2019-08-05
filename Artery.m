@@ -5,7 +5,7 @@ classdef Artery < handle
         %Vectors
         V = SimulationVectors;
                 
-        %Stress Free Parameters
+        %Stress-free Parameters
         L0 = 5.1; %mm
         Ro = 409*1e-3; %um to mm
         H0 = 102*1e-3; %um to mm

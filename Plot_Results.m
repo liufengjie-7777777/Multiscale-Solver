@@ -1,7 +1,7 @@
 %Plot Results
 
 %%Analyze biaxial Simulation
-load Simulation-alphaPS(1);
+load Simulation-alphaPS(2);
 b = SimArteryVessel;
 
 %Update material parameters that changed
@@ -86,7 +86,7 @@ legend(strLegend);
 %%
 
 %Plot Cauchy stress as a function of normalized radii and time
-%(currently passive and steady-state active)
+
 N = round(linspace(1,length(b.riVec),10)); %[1,length(b.riVec)]; %
 p = zeros(20,length(N));
 S = zeros(20,length(N),3);
