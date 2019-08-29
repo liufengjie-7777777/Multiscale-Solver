@@ -51,11 +51,11 @@ classdef SimulationVectors < handle
             obj.x2c = zeros(SamplePoints,2);
             obj.y2c = zeros(SamplePoints,2);
             
-            if Sim %Uni
+            if Sim %Uniaxial Simulation
                 obj.ufs = zeros(SamplePoints,1);
                 obj.Pisom = zeros(SamplePoints,1);
                 obj.lr = zeros(SamplePoints,1);       
-            else %Bi
+            else %Biaxial Simulation
                 obj.ufsN = zeros(SamplePoints,31);
                 obj.ufs = zeros(SamplePoints,1);
                 obj.ri = zeros(SamplePoints,1);
