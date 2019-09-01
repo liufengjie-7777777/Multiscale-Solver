@@ -147,6 +147,8 @@ end
 %Plot SMC parameters as a function of normalized radii (passive and
 %steady-state active
 
+%Choose N to show results as a function of time or Passive and SS values
+N = [1,length(b.riVec)]; %round(linspace(1,length(b.riVec),10)); %
 N = [1,length(b.riVec)];
 
 dMArMA0 = zeros(20,length(N));

@@ -1,7 +1,8 @@
 classdef ArteryStrip < Artery
     properties
         dt = 1; %Seconds
-        TotalTime = 5; %Minutes 
+        TotalTime = 5; %Minutes
+        PrintProgress = 1;
     end
     methods
         %Stretch Ratios
@@ -61,13 +62,17 @@ classdef ArteryStrip < Artery
                 obj.Pisom;
                 
                 obj.V.UpdateVectors(i,obj.cs);
-                fprintf('| Pisom=%.2f kPa | ',obj.V.Pisom(i)*1e3);
-                fprintf('lr=%.3f, lt=%.3f, lz=%.3f | ',obj.cs.lrNum,obj.cs.ltNum,obj.cs.lzNum);
-                err = 0;
+                if obj.PrintProgress
+                    fprintf('| Pisom=%.2f kPa | ',obj.V.Pisom(i)*1e3);
+                    fprintf('lr=%.3f, lt=%.3f, lz=%.3f | ',obj.cs.lrNum,obj.cs.ltNum,obj.cs.lzNum);
+                end
+               	err = 0;
             end    
         end
         
         function [err] = InitialParameters(obj)
+            obj.cs.lrNum = 0;
+            
             obj.nCalc;
             
             %2nd Step - Calculate Passive State
