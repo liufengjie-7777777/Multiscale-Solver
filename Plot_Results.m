@@ -249,3 +249,8 @@ for k=1:2 %1-r and 2-z direction
     ylabel(streS2i{k}); xlabel('time (min)');
     ylim(limCalc(eS2i,[0.9 1.1],2));
 end
+
+
+%%
+%Plot SS SMC parameters
+
