@@ -50,7 +50,7 @@ classdef Artery < handle
         function F = F(obj)
             F = sym(zeros(3,3,length(obj.cs.lr)));
             for j=1:length(obj.cs.lr)
-                F = diag([obj.cs.lr(j),obj.cs.lt(j),obj.cs.lz]);
+                F(:,:,j) = diag([obj.cs.lr(j),obj.cs.lt(j),obj.cs.lz]);
             end
         end
         function C = C(obj)
@@ -211,7 +211,7 @@ classdef Artery < handle
         end
         
         %Stress Functions(:,1)-r (:,2)-theta (:,3)-z
-        function obj = sECM(obj)
+        function obj = sECM(obj)             
             aj = obj.alphaj(1:4);
             obj.cs.sECM = sym(zeros(3,length(obj.cs.lr)));
             for j=1:length(obj.cs.lr)
