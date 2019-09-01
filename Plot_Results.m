@@ -202,7 +202,6 @@ for k=1:2 %1-r and 2-z direction
     LMi = zeros(length(b.timeVec),N);
     Lfoi = zeros(length(b.timeVec),N);
     eS2i = zeros(length(b.timeVec),N,2);
-    %eS2yr = zeros(length(b.timeVec),N);
     
     for i=1:length(b.timeVec)
         b.ri = b.riVec(i);
