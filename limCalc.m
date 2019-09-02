@@ -8,12 +8,16 @@ function [lim] = limCalc(vals,coeff,N)
     
     coeff = coeff*10^N;
     lim = [round(coeff(1)*min(vals,[],'all'))/10^N round(coeff(2)*max(vals,[],'all'))/10^N];
-    if lim(1) >= lim(2)
-        lim(1) = min(vals,[],'all');
-        lim(2) = lim(1) + 1;
-    end
-    if lim(1)>=0 && lim(1) <= 0.2
-        lim(1) = 0;
+    if length(lim)>1
+        if lim(1) >= lim(2)
+            lim(1) = min(vals,[],'all');
+            lim(2) = lim(1) + 1;
+        end
+        if lim(1)>=0 && lim(1) <= 0.2
+            lim(1) = 0;
+        end
+    else
+        lim = [0 1];
     end
 end
 
