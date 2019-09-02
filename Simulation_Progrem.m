@@ -5,27 +5,28 @@ clear all; close all; clc; %#ok<CLALL>
 if input('Which experiment do you want to simulate?\nEnter 1 for biaxial and 0 for uniaxial: ')
     a = ArteryVessel;
     a.cs.Pin = 90*133.322387415*1e-6; %Inner pressure
-    a.cs.lambda = 1.5; %Axial loaded stretch ratio 
+    a.cs.lambda = 1.5; %Axial loaded stretch ratio
+    Sim = 'Biaxial';
 else
     a = ArteryStrip;
     a.cs.ltG = 1.69; %Circumferential stretch ratio
+    Sim = 'Uniaxial';
 end
 
-varName = 'LMmax';
-varUnits = 'nm'; varUnitConvertion = 1e6;
+varName = 'alphaPS';
 
-SimVariable = linspace(0.8,1.4,4)*a.(varName);
+varValues = linspace(0.4,1.6,4)*a.(varName);
 a.PrintProgress = 0;
 
 if ~a.InitialParameters
 	SamplePoints = length(a.V.time);
-    ufs = zeros(SamplePoints,31,length(SimVariable));
-    ri = zeros(SamplePoints,length(SimVariable));
+    ufs = zeros(SamplePoints,31,length(varValues));
+    ri = zeros(SamplePoints,length(varValues));
 end
 
-for n=1:length(SimVariable)
-    a.(varName) = SimVariable(n);
-    fprintf('(%d) Now simulating %s = %.2f (%s)\n',n,varName,SimVariable(n)*varUnitConvertion,varUnits);
+for n=1:length(varValues)
+    a.(varName) = varValues(n);
+    fprintf('(%d) Now simulating %s=%.2f\n',n,varName,varValues(n)*180/pi);
     if ~a.InitialParameters
         SamplePoints = length(a.V.time);
         %Active Simulation
@@ -45,9 +46,9 @@ for n=1:length(SimVariable)
             end
         end
         
-        ufs(:,:,n) = a.V.ufsN;
-        ri(:,n) = a.V.ri;
+        %ufs(:,:,n) = a.V.ufsN;
+        %ri(:,n) = a.V.ri;
         
-        save(['Simulation-' varName '(' num2str(n) ').mat'],'a');
+        save([Sim 'Simulation-' varName '(' num2str(n) ').mat'],'a');
     end
 end

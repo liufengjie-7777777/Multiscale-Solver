@@ -45,9 +45,9 @@ alphaj = [a1 -a1 -a4 a4];
 
 sECM = Cp/2*eye(3);
 for j=1:1 %length(alphaj)
-    MECMj = [0, sin(alphaj(j)), cos(alphaj(j))];
+    MECMj = [0, cos(alphaj(j)), sin(alphaj(j))];
     I4fj = MECMj*(C*transpose(MECMj));
-    sECM = sECM + 0.5*c(1,j)*(I4fj-1)*exp(c(2,j)*power(I4fj-1,2))*(MECMj'*MECMj);
+    sECM = sECM + 1*c(1,j)*(I4fj-1)*exp(c(2,j)*power(I4fj-1,2))*(MECMj'*MECMj);
 end
 sECM = simplify( 2*F*sECM*transpose(F) );
 
