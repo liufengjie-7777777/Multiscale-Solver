@@ -15,7 +15,7 @@ end
 
 varName = 'alphaPS';
 
-varValues = linspace(0.8,1.4,4)*a.(varName);
+varValues = linspace(0.4,1.6,4)*a.(varName);
 a.PrintProgress = 0;
 
 if ~a.InitialParameters

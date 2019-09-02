@@ -97,9 +97,7 @@ classdef SimulationVectors < handle
                 obj.eS2(i,:) = [cs.eS2xr,cs.eS2yr,cs.eS2xz,cs.eS2yz];
                 obj.x2c(i,:) = [cs.x2cr,cs.x2cz];
                 obj.y2c(i,:) = [cs.y2cr,cs.y2cz];
-            end
-            
-            if ~isempty(obj.Do)
+            elseif ~isempty(obj.Do)
                 obj.ri(i) = cs.riNum;
             	obj.Do(i) = cs.roNum*2e3;
             	obj.FT(i) = cs.FT*1e3;

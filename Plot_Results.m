@@ -1,7 +1,7 @@
 %Plot Results
 
 %%Analyze a Simulation
-Sim = 'Biaxial';
+Sim = 'Biaxial'; %'Uniaxial'; %
 varName = 'alphaPS';
 n = 1;
 
