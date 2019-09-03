@@ -5,7 +5,7 @@ Sim = 'Biaxial'; %'Uniaxial'; %
 varName = 'alphaPS';
 n = 1;
 
-load([Sim 'Simulation-' varName '(' num2str(n) ').mat']);
+load(['Simulation Results\' Sim 'Simulation-' varName '(' num2str(n) ').mat']);
 b = SimArteryVessel;
 
 %Update material parameters that changed
@@ -59,7 +59,7 @@ Do = zeros(length(b.timeVec),N);
 FT = zeros(length(b.timeVec),N);
 strLegend = strings(1,N);
 for n=1:N
-    load([Sim 'Simulation-' varName '(' num2str(n) ').mat']);
+    load(['Simulation Results\' Sim 'Simulation-' varName '(' num2str(n) ').mat']);
     
     %Update material parameters that changed
     b.UpdateParameters(a);

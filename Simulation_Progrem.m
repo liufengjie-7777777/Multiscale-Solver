@@ -13,9 +13,9 @@ else
     Sim = 'Uniaxial';
 end
 
-varName = 'beta';
+varName = 'lMD';
 
-varValues = linspace(0.4,1.6,4)*a.(varName);
+varValues = linspace(0.4,1.6,1)*a.(varName);
 a.PrintProgress = 0;
 
 if ~a.InitialParameters
@@ -49,6 +49,6 @@ for n=1:length(varValues)
         %ufs(:,:,n) = a.V.ufsN;
         %ri(:,n) = a.V.ri;
         
-        save([Sim 'Simulation-' varName '(' num2str(n) ').mat'],'a');
+        save(['Simulation Results\' Sim 'Simulation-' varName '(' num2str(n) ').mat'],'a');
     end
 end
