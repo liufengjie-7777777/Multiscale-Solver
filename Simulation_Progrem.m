@@ -13,9 +13,9 @@ else
     Sim = 'Uniaxial';
 end
 
-varName = 'lMD';
+varName = 'beta';
 
-varValues = linspace(0.4,1.6,1)*a.(varName);
+varValues = linspace(0.4,1.6,4)*a.(varName);
 a.PrintProgress = 0;
 
 if ~a.InitialParameters
