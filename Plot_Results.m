@@ -48,11 +48,10 @@ hold off;
 %Plot Do and FT as a function of time for multiple simulations
 N = 4; %number of files to open
 Sim = 'Biaxial';
-varName = 'beta';
+varName = 'LS20';
 
 %legendOptions
 %['\alpha_{PS} = ' num2str(b.alphaPS*180/pi) '^o']
-    
 
 b = SimArteryVessel;
 Do = zeros(length(b.timeVec),N);
@@ -63,7 +62,7 @@ for n=1:N
     
     %Update material parameters that changed
     b.UpdateParameters(a);
-    strLegend{n} = ['\beta = ' num2str(b.beta) '(s*MPa)^{-1}'];
+    strLegend{n} = [varName ' = ' num2str(b.(varName)) ' (?)'];
     
     %Update vectors
     b.riVec = a.V.ri;
