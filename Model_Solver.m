@@ -1,4 +1,4 @@
-1clear all; close all; clc; %#ok<CLALL>
+clear all; close all; clc; %#ok<CLALL>
 
 %Define a as artrey and calc n
 if input('Which experiment do you want to simulate?\nEnter 1 for biaxial and 0 for uniaxial: ')
@@ -28,4 +28,4 @@ if ~a.InitialParameters
         a.PlotResults;
     end
 end
-    
+

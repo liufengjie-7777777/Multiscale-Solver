@@ -5,7 +5,8 @@ Sim = 'Biaxial'; %'Uniaxial'; %
 varName = 'alphaPS';
 n = 1;
 
-load(['Simulation Results\' Sim 'Simulation-' varName '(' num2str(n) ').mat']);
+%load(['Simulation Results\' Sim 'Simulation-' varName '(' num2str(n) ').mat']);
+
 b = SimArteryVessel;
 
 %Update material parameters that changed
