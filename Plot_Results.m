@@ -256,5 +256,61 @@ end
 
 
 %%
-%Plot SS SMC parameters
+%Plot SS Do and FT in parameter scaling
 
+Sim = 'Biaxial';
+varName = {'alphaPS','AS2','beta','deltam','dMA0','LLA0','lMD','LMmax','LS20'};
+N = length(varName); %number of files to open
+
+strLegend = {'\alpha_{PS}','A_{S2}','\beta','\delta_m','dMA0','L_{LA0}','l_{MD}','L_{Mmax}','L_{S20}'};
+marker = {'+','o','*','.','s','d','^','v','<','>','p','h'};
+
+%legendOptions
+%['\alpha_{PS} = ' num2str(b.alphaPS*180/pi) '^o']
+
+b = SimArteryVessel;
+Do = zeros(4,N);
+FT = Do;
+%strLegend = strings(1,N);
+for n=1:N
+    for k=1:4
+        load(['Simulation Results\' Sim 'Simulation-' varName{n} '(' num2str(k) ').mat']);
+
+        %Update material parameters that changed
+        b.UpdateParameters(a);
+        %strLegend{n} = [varName ' = ' num2str(b.(varName)) ' (?)'];
+
+        %Update vectors
+        b.riVec = a.V.ri;
+        b.ufsVec = a.V.ufsN;
+        b.nAMpVec = a.V.nAMp;
+        b.nAMVec = a.V.nAM;
+        b.timeVec = a.V.time;
+
+        i = length(b.timeVec);
+
+        b.ri = b.riVec(i);
+        b.ufs = b.ufsVec(i,:);
+        b.nAMp = b.nAMpVec(i);
+        b.nAM = b.nAMVec(i);
+
+        Do(k,n) = b.ro*2e3; %um
+        FT(k,n) = b.FTCalc*1e3; %mN
+    end
+end
+
+DoCom = 834.6234;
+FTCom  = 4.5765;
+
+DoErr = (Do-DoCom)/DoCom*100;
+FTErr = (FT-FTCom)/FTCom*100;
+
+scaling = linspace(0.4,1.6,4);
+figure();
+for n=1:N
+    plot(scaling,DoErr(:,n),marker{n});
+    hold on;
+end
+hold off;
+legend(strLegend);
+ylabel('Difference (%)'); xlabel('Parameter Scaling (-)');
