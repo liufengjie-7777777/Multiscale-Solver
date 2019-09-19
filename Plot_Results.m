@@ -286,14 +286,14 @@ for n=1:N
         b.nAMpVec = a.V.nAMp;
         b.nAMVec = a.V.nAM;
         b.timeVec = a.V.time;
-
+        
         i = length(b.timeVec);
-
+        
         b.ri = b.riVec(i);
         b.ufs = b.ufsVec(i,:);
         b.nAMp = b.nAMpVec(i);
         b.nAM = b.nAMVec(i);
-
+        
         Do(k,n) = b.ro*2e3; %um
         FT(k,n) = b.FTCalc*1e3; %mN
     end

@@ -13,42 +13,47 @@ else
     Sim = 'Uniaxial';
 end
 
-varName = 'beta';
+varNames = {'alphaPS','AS2','beta','deltam','dMA0','LLA0','lMD','LMmax','LS20'};
 
-varValues = linspace(0.4,1.6,4)*a.(varName);
-a.PrintProgress = 0;
-
-if ~a.InitialParameters
-	SamplePoints = length(a.V.time);
-    ufs = zeros(SamplePoints,31,length(varValues));
-    ri = zeros(SamplePoints,length(varValues));
-end
-
-for n=1:length(varValues)
-    a.(varName) = varValues(n);
-    fprintf('(%d) Now simulating %s=%.2f\n',n,varName,varValues(n)*180/pi);
+for k=1:length(varNames)
+    varName = varNames{k}; %'beta';
+    mkdir(['Simulation Results2\' varName ' Simulations\']);
+    
+    varValues = linspace(0.4,1.6,25)*a.(varName);
+    a.PrintProgress = 0;
+    
     if ~a.InitialParameters
         SamplePoints = length(a.V.time);
-        %Active Simulation
-        for i=1:SamplePoints
-            if i==1 || (i>100 && mod(i,100)==0)
-                fprintf('(%d/%d) Time=%.1f min: ',i,SamplePoints,a.V.time(i));
-            end
-            tic
-            if a.stepCalc(i)
-                fprintf('Error calculating current step\n');
-                i = SamplePoints+1; %#ok<FXSET>
-            else
-                eTime = toc;
+        ufs = zeros(SamplePoints,31,length(varValues));
+        ri = zeros(SamplePoints,length(varValues));
+    end
+    
+    for n=1:length(varValues)
+        a.(varName) = varValues(n);
+        fprintf('(%d) Now simulating %s=%.2f\n',n,varName,varValues(n)*180/pi);
+        if ~a.InitialParameters
+            SamplePoints = length(a.V.time);
+            %Active Simulation
+            for i=1:SamplePoints
                 if i==1 || (i>100 && mod(i,100)==0)
-                    fprintf('(Step time is %.2f sec. Elapsed time is %.1f min)\n',eTime,(SamplePoints-i)*eTime/60);
+                    fprintf('(%d/%d) Time=%.1f min: ',i,SamplePoints,a.V.time(i));
+                end
+                tic
+                if a.stepCalc(i)
+                    fprintf('Error calculating current step\n');
+                    i = SamplePoints+1; %#ok<FXSET>
+                else
+                    eTime = toc;
+                    if i==1 || (i>100 && mod(i,100)==0)
+                        fprintf('(Step time is %.2f sec. Elapsed time is %.1f min)\n',eTime,(SamplePoints-i)*eTime/60);
+                    end
                 end
             end
+            
+            %ufs(:,:,n) = a.V.ufsN;
+            %ri(:,n) = a.V.ri;
+            
+            save(['Simulation Results2\' varName ' Simulations\' Sim 'Simulation-' varName '(' num2str(n) ').mat'],'a');
         end
-        
-        %ufs(:,:,n) = a.V.ufsN;
-        %ri(:,n) = a.V.ri;
-        
-        save(['Simulation Results\' Sim 'Simulation-' varName '(' num2str(n) ').mat'],'a');
     end
 end
