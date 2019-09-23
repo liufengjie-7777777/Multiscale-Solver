@@ -13,13 +13,16 @@ else
     Sim = 'Uniaxial';
 end
 
-varNames = {'alphaPS','AS2','beta','deltam','dMA0','LLA0','lMD','LMmax','LS20'};
+%varNames = {'alphaPS','AS2','beta','deltam','dMA0','LLA0','lMD','LMmax','LS20'};
+
+varNames = {'DKCL'};
 
 for k=1:length(varNames)
-    varName = varNames{k}; %'beta';
-    mkdir(['Simulation Results2\' varName ' Simulations\']);
+    varName = varNames{k};
+    mkdir(['Simulation Results3\' varName ' Simulations\']);
     
-    varValues = linspace(0.4,1.6,25)*a.(varName);
+    OriginalVarValue = a.(varName);
+    varValues = linspace(0.4,1.6,2)*a.(varName);
     a.PrintProgress = 0;
     
     if ~a.InitialParameters
@@ -56,4 +59,5 @@ for k=1:length(varNames)
             save(['Simulation Results2\' varName ' Simulations\' Sim 'Simulation-' varName '(' num2str(n) ').mat'],'a');
         end
     end
+    a.(varName) = OriginalVarValue;
 end

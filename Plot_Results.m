@@ -259,10 +259,12 @@ end
 %Plot SS Do and FT in parameter scaling
 
 Sim = 'Biaxial';
-varName = {'alphaPS','AS2','beta','deltam','dMA0','LLA0','lMD','LMmax','LS20'};
+%varName = {'alphaPS','AS2','beta','deltam','dMA0','LLA0','lMD','LMmax','LS20'};
+varName = {'DKCL'};
 N = length(varName); %number of files to open
 
-strLegend = {'\alpha_{PS}','A_{S2}','\beta','\delta_m','dMA0','L_{LA0}','l_{MD}','L_{Mmax}','L_{S20}'};
+%strLegend = {'\alpha_{PS}','A_{S2}','\beta','\delta_m','dMA0','L_{LA0}','l_{MD}','L_{Mmax}','L_{S20}'};
+strLegend = {'D_{KCL}'};
 marker = {'+','o','*','.','s','d','^','v','<','>','p','h'};
 
 %legendOptions
@@ -274,7 +276,7 @@ FT = Do;
 %strLegend = strings(1,N);
 for n=1:N
     for k=1:4
-        load(['Simulation Results\' Sim 'Simulation-' varName{n} '(' num2str(k) ').mat']);
+        load(['Simulation Results2\' varName{n} ' Simulations\' Sim 'Simulation-' varName{n} '(' num2str(k) ').mat']);
 
         %Update material parameters that changed
         b.UpdateParameters(a);
