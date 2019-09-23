@@ -260,22 +260,23 @@ end
 
 Sim = 'Biaxial';
 %varName = {'alphaPS','AS2','beta','deltam','dMA0','LLA0','lMD','LMmax','LS20'};
-varName = {'dMA0','LLA0','lMD','LMmax','LS20','alphaPS','AS2','deltam','beta'};
+varName = {'LLA0','lMD','LMmax','LS20','dMA0','deltam','alphaPS','AS2'};
 N = length(varName); %number of files to open
 
 %strLegend = {'\alpha_{PS}','A_{S2}','\beta','\delta_m','dMA0','L_{LA0}','l_{MD}','L_{Mmax}','L_{S20}'};
-strLegend = {'dMA0','L_{LA0}','l_{MD}','L_{Mmax}','L_{S20}','\alpha_{PS}','A_{S2}','\delta_m','\beta'};
+strLegend = {'L_{LA0}','l_{MD}','L_{Mmax}','L_{S20}','dMA0','\delta_m','\alpha_{PS}','A_{S2}'};
 marker = {'+','o','*','.','s','d','^','v','<','>','p','h'};
+lineSpec = {'-','--','-.',':','-','--','-.',':','-'};
 
 %legendOptions
 %['\alpha_{PS} = ' num2str(b.alphaPS*180/pi) '^o']
 
 b = SimArteryVessel;
-Do = zeros(4,N);
+Do = zeros(25,N);
 FT = Do;
 %strLegend = strings(1,N);
 for n=1:N
-    for k=1:25
+    for k=1:size(Do,1)
         load(['Simulation Results2\' varName{n} ' Simulations\' Sim 'Simulation-' varName{n} '(' num2str(k) ').mat']);
 
         %Update material parameters that changed
@@ -306,31 +307,58 @@ FTCom  = 4.5765;
 
 DoErr = (Do-DoCom)/DoCom*100;
 FTErr = (FT-FTCom)/FTCom*100;
-
 scaling = linspace(0.4,1.6,size(DoErr,1));
+
 figure();
-
-lineSpec = {'-','--','-.',':','-','--','-.',':','-'};
-
-for n=1:5
+subplot(1,2,1);
+for n=1:4
     plot(scaling,DoErr(:,n),lineSpec{n});
     hold on;
 end
 hold off;
-legend(strLegend{1:5});
-ylabel('Difference (%)'); xlabel('Parameter Scaling (-)');
+legend(strLegend{1:n});
+ylabel('Do Difference (%)'); xlabel('Parameter Scaling (-)');
+xlim([0.4 1.6]); grid on;
 
-figure();
+%figure();
+subplot(1,2,2);
 
 lineSpec = {'-','--','-.',':','-','--','-.',':','-'};
 
-for n=6:9
+for n=5:length(strLegend)
     plot(scaling,DoErr(:,n),lineSpec{n});
     hold on;
 end
 hold off;
-legend(strLegend{6:9});
-ylabel('Difference (%)'); xlabel('Parameter Scaling (-)');
+legend(strLegend{5:end});
+ylabel('Do Difference (%)'); xlabel('Parameter Scaling (-)');
+xlim([0.4 1.6]); grid on;
+
+figure();
+subplot(1,2,1);
+lineSpec = {'-','--','-.',':','-','--','-.',':','-'};
+
+for n=1:4
+    plot(scaling,FTErr(:,n),lineSpec{n});
+    hold on;
+end
+hold off;
+legend(strLegend{1:n});
+ylabel('F_T Difference (%)'); xlabel('Parameter Scaling (-)');
+xlim([0.4 1.6]); grid on;
+
+%figure();
+subplot(1,2,2);
+lineSpec = {'-','--','-.',':','-','--','-.',':','-'};
+
+for n=5:length(strLegend)
+    plot(scaling,FTErr(:,n),lineSpec{n});
+    hold on;
+end
+hold off;
+legend(strLegend{5:end});
+ylabel('F_T Difference (%)'); xlabel('Parameter Scaling (-)');
+xlim([0.4 1.6]); grid on;
 
 
 
