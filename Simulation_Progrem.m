@@ -19,6 +19,7 @@ for k=1:length(varNames)
     varName = varNames{k}; %'beta';
     mkdir(['Simulation Results2\' varName ' Simulations\']);
     
+    OriginalVarValue = a.(varName);
     varValues = linspace(0.4,1.6,25)*a.(varName);
     a.PrintProgress = 0;
     
@@ -56,4 +57,5 @@ for k=1:length(varNames)
             save(['Simulation Results2\' varName ' Simulations\' Sim 'Simulation-' varName '(' num2str(n) ').mat'],'a');
         end
     end
+    a.(varName) = OriginalVarValue;
 end
