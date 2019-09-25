@@ -13,11 +13,12 @@ else
     Sim = 'Uniaxial';
 end
 
-varNames = {'alphaPS','AS2','beta','deltam','dMA0','LLA0','lMD','LMmax','LS20'};
+varNames = {'gammar','DKCL'}; %'kMAi(1)','kMAi(2)',
+saveDir = 'Simulation Results3\';
 
 for k=1:length(varNames)
     varName = varNames{k}; %'beta';
-    mkdir(['Simulation Results2\' varName ' Simulations\']);
+    mkdir([saveDir varName ' Simulations\']);
     
     OriginalVarValue = a.(varName);
     varValues = linspace(0.4,1.6,25)*a.(varName);
@@ -31,7 +32,7 @@ for k=1:length(varNames)
     
     for n=1:length(varValues)
         a.(varName) = varValues(n);
-        fprintf('(%d) Now simulating %s=%.2f\n',n,varName,varValues(n)*180/pi);
+        fprintf('(%d) Now simulating %s=%.2f\n',n,varName,varValues(n));
         if ~a.InitialParameters
             SamplePoints = length(a.V.time);
             %Active Simulation
@@ -54,7 +55,7 @@ for k=1:length(varNames)
             %ufs(:,:,n) = a.V.ufsN;
             %ri(:,n) = a.V.ri;
             
-            save(['Simulation Results2\' varName ' Simulations\' Sim 'Simulation-' varName '(' num2str(n) ').mat'],'a');
+            save([saveDir varName ' Simulations\' Sim 'Simulation-' varName '(' num2str(n) ').mat'],'a');
         end
     end
     a.(varName) = OriginalVarValue;

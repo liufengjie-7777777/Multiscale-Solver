@@ -36,7 +36,7 @@ classdef Artery < handle
         %Parameters Obtained by Fitting Contraction Data (Table 2)
         beta = 0.14; %(s*MPa)^-1
         EAMp = 0.24e3; %GPa to MPa
-        EAM = 0.072e3; %0.3*EAMp - According to the paper
+        %EAM = 0.072e3; %0.3*EAMp - According to the paper
         kMAi = [0.93 0.35]; %1-K_MAr, 2-K_MAz;
         cfo = 8.85;
         ufoOpt = 1.85;
@@ -46,6 +46,10 @@ classdef Artery < handle
         lzOpt = 1.54; %in vivo axial stretch
     end
     methods
+        function EAM = EAM(obj)
+            EAM = 0.3*obj.EAMp;
+        end
+        
         %Defomation Tensor and etc.
         function F = F(obj)
             F = sym(zeros(3,3,length(obj.cs.lr)));
