@@ -355,10 +355,10 @@ for n=5:length(strLegend)
     plot(scaling,FTErr(:,n),lineSpec{n});
     hold on;
 end
+
 hold off;
 legend(strLegend{5:end});
 ylabel('F_T Difference (%)'); xlabel('Parameter Scaling (-)');
 xlim([0.4 1.6]); grid on;
-
 
 

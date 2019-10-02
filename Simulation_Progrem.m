@@ -13,15 +13,15 @@ else
     Sim = 'Uniaxial';
 end
 
-varNames = {'gammar','DKCL'}; %'kMAi(1)','kMAi(2)',
+varNames = {'kMAi(1)','kMAi(2)'};
 saveDir = 'Simulation Results3\';
 
 for k=1:length(varNames)
     varName = varNames{k}; %'beta';
     mkdir([saveDir varName ' Simulations\']);
     
-    OriginalVarValue = a.(varName);
-    varValues = linspace(0.4,1.6,25)*a.(varName);
+    OriginalVarValue = a.kMAi(k); %(varName);
+    varValues = linspace(0.4,1.6,25)*a.kMAi(k); %.(varName);
     a.PrintProgress = 0;
     
     if ~a.InitialParameters
@@ -30,8 +30,8 @@ for k=1:length(varNames)
         ri = zeros(SamplePoints,length(varValues));
     end
     
-    for n=1:length(varValues)
-        a.(varName) = varValues(n);
+    for n=11:length(varValues)
+        a.kMAi(k) = varValues(n); %(varName) = varValues(n);
         fprintf('(%d) Now simulating %s=%.2f\n',n,varName,varValues(n));
         if ~a.InitialParameters
             SamplePoints = length(a.V.time);
@@ -58,5 +58,5 @@ for k=1:length(varNames)
             save([saveDir varName ' Simulations\' Sim 'Simulation-' varName '(' num2str(n) ').mat'],'a');
         end
     end
-    a.(varName) = OriginalVarValue;
+    a.kMAi(k) = OriginalVarValue; %.(varName) = OriginalVarValue;
 end
