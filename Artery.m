@@ -127,8 +127,15 @@ classdef Artery < handle
         end
         function obj = LMi(obj)
             obj.dMAiMA0;
-        	obj.cs.LMr = obj.LMmax*(1-obj.kqp*obj.cs.dMArMA0); obj.cs.LMr(subs(obj.cs.LMr,obj.cs.lrNum)<0) = 0;
+        	obj.cs.LMr = obj.LMmax*(1-obj.kqp*obj.cs.dMArMA0);
         	obj.cs.LMz = obj.LMmax*(1-obj.kqp*obj.cs.dMAzMA0); obj.cs.LMz(obj.cs.LMz<0) = 0;
+            
+            for i=1:length(obj.cs.lrNum)
+                if subs(obj.cs.LMr(i),obj.cs.lrNum(i))<0
+                    obj.cs.LMr(i) = 0;
+                end
+            end
+            
         end
         function obj = Lfoi(obj)
             obj.LMi;

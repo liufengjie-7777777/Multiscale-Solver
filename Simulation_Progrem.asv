@@ -14,26 +14,26 @@ else
 end
 
 VarName = {'lambda','Pin'};
-
-lambdaValues = linspace(0.5,2,16);
-PinValues = linspace(40,110,8); %mmHg
-
+lambdaValues = [linspace(0.5,2,16);linspace(40,110,8)];
+PinValues = ;
 saveDir = 'Simulation lzandPin\';
-mkdir(saveDir);
+mkdir([saveDir]);
 
 a.PrintProgress = 0;
-
-SimCount = 1; 
-for n1=1:length(lambdaValues)
-    for n2=1:length(PinValues)
-        if ~a.InitialParameters
-            SamplePoints = length(a.V.time);
-        end
+for k=1:length(VarName)
+    
+    if ~a.InitialParameters
+        SamplePoints = length(a.V.time);
+        ufs = zeros(SamplePoints,31,length(varValues));
+        ri = zeros(SamplePoints,length(varValues));
+    end
+    
+    for n1=1:length(varValues(1,:))
+        for n2=1:length(varValues(2,:))
+        a.cs.(VarName{n}) = VarValues{k,n};
+        a.cs.Pin = VarValues{k};
         
-        a.cs.lambda = lambdaValues(n1);
-        a.cs.Pin = PinValues(n2)*133.322387415*1e-6;
-        
-        fprintf('(%d) Now simulating %s=%.2f and %s=%.2f (mmHg)\n',SimCount,'\lambda',lambdaValues(n1),'Pin',PinValues(n2));
+        fprintf('(%d) Now simulating %s=%.2f\n',n,varName,varValues(n));
         if ~a.InitialParameters
             SamplePoints = length(a.V.time);
             %Active Simulation
@@ -53,9 +53,11 @@ for n1=1:length(lambdaValues)
                 end
             end
             
-            save([saveDir Sim ' Simulation' '(' num2str(SimCount) ').mat'],'a');
-            SimCount = SimCount + 1;
+            %ufs(:,:,n) = a.V.ufsN;
+            %ri(:,n) = a.V.ri;
+            
+            save([saveDir varName ' Simulations\' Sim 'Simulation-' varName '(' num2str(n) ').mat'],'a');
         end
     end
+    a.kMAi(k) = OriginalVarValue; %.(varName) = OriginalVarValue;
 end
-
