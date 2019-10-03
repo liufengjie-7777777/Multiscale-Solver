@@ -361,4 +361,62 @@ legend(strLegend{5:end});
 ylabel('F_T Difference (%)'); xlabel('Parameter Scaling (-)');
 xlim([0.4 1.6]); grid on;
 
+%%
+%Plot SS Do and FT for different Pin and lz
+
+Sim = 'Biaxial';
+
+n = [16,8];
+
+N = n(1)*n(2); %number of files to open
+
+%strLegend = {};
+%marker = {'+','o','*','.','s','d','^','v','<','>','p','h'};
+%lineSpec = {'-','--','-.',':','-','--','-.',':','-'};
+
+b = SimArteryVessel;
+Do = zeros(n);
+FT = Do;
+
+for k1=1:n(1)
+    for k2=1:n(2)
+        load(['Simulation lzandPin\' Sim ' Simulation' '(' num2str(n(2)*(k1-1)+k2) ').mat']);
+        
+        %Update material parameters that changed
+        b.UpdateParameters(a);
+        %strLegend{n} = [varName ' = ' num2str(b.(varName)) ' (?)'];
+
+        %Update vectors
+        b.riVec = a.V.ri;
+        b.ufsVec = a.V.ufsN;
+        b.nAMpVec = a.V.nAMp;
+        b.nAMVec = a.V.nAM;
+        b.timeVec = a.V.time;
+        
+        i = length(b.timeVec);
+        
+        b.ri = b.riVec(i);
+        b.ufs = b.ufsVec(i,:);
+        b.nAMp = b.nAMpVec(i);
+        b.nAM = b.nAMVec(i);
+        
+        Do(k1,k2) = b.ro*2e3; %um
+        FT(k1,k2) = b.FTCalc*1e3; %mN
+    end
+end
+
+lz = linspace(0.5,2,16);
+Pin= linspace(40,110,8);
+
+figure();
+for k2=1:n(2)
+    plot(lz,Do(:,k2));
+    hold on;
+    strLegend{k2} = [num2str(Pin(k2)) ' mmHg'];
+end
+hold off;
+legend(strLegend); grid on;
+xlabel('\lambda_z'); ylabel('Do (\mum)');
+
+
 
