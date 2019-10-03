@@ -413,6 +413,7 @@ for k1=1:n(1)
 end
 
 figure();
+clear strLegend;
 for k2=1:n(2)
     plot(lz,Do(:,k2));
     hold on;
@@ -422,5 +423,24 @@ hold off;
 legend(strLegend);
 xlabel('\lambda_z'); ylabel('Do (\mum)');
 
+figure();
+clear strLegend;
+for k2=1:n(2)
+    plot(lz,FT(:,k2));
+    hold on;
+    strLegend{k2} = [num2str(Pin(k2)) ' mmHg'];
+end
+hold off;
+legend(strLegend);
+xlabel('\lambda_z'); ylabel('FT (mN)');
 
-
+figure();
+clear strLegend;
+for k1=1:n(1)
+    plot(Pin,Do(k1,:));
+    hold on;
+    strLegend{k1} = num2str(lz(k1));
+end
+hold off;
+legend(strLegend);
+xlabel('Pin (mmHg)'); ylabel('Do (\mum)');
