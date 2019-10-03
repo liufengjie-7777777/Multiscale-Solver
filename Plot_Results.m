@@ -375,8 +375,10 @@ N = n(1)*n(2); %number of files to open
 %lineSpec = {'-','--','-.',':','-','--','-.',':','-'};
 
 b = SimArteryVessel;
-Do = zeros(n);
-FT = Do;
+Do = zeros(n); FT = Do;
+
+lz = zeros(n(1),1); %linspace(0.5,2,16);
+Pin = zeros(n(2),1); %linspace(40,110,8);
 
 for k1=1:n(1)
     for k2=1:n(2)
@@ -402,11 +404,13 @@ for k1=1:n(1)
         
         Do(k1,k2) = b.ro*2e3; %um
         FT(k1,k2) = b.FTCalc*1e3; %mN
+        
+        lz(k1) = b.lz;
+        if k1==1
+            Pin(k2) = b.Pin/(133.322387415*1e-6); %Convert to mmHg
+        end
     end
 end
-
-lz = linspace(0.5,2,16);
-Pin= linspace(40,110,8);
 
 figure();
 for k2=1:n(2)
@@ -415,7 +419,7 @@ for k2=1:n(2)
     strLegend{k2} = [num2str(Pin(k2)) ' mmHg'];
 end
 hold off;
-legend(strLegend); grid on;
+legend(strLegend);
 xlabel('\lambda_z'); ylabel('Do (\mum)');
 
 

@@ -303,6 +303,9 @@ classdef SimArtery < handle
             obj.gammar = a.gammar;
             obj.DKCL = a.DKCL;
             obj.lzOpt = a.lzOpt;
+            
+            obj.Pin = a.cs.Pin;
+            obj.lambda = a.cs.lambda;
         end
     end
 end
