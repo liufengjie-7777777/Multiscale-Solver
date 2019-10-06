@@ -387,7 +387,7 @@ for k1=1:n(1)
         %Update material parameters that changed
         b.UpdateParameters(a);
         %strLegend{n} = [varName ' = ' num2str(b.(varName)) ' (?)'];
-
+        
         %Update vectors
         b.riVec = a.V.ri;
         b.ufsVec = a.V.ufsN;
