@@ -199,6 +199,9 @@ classdef ArteryVessel < Artery
                 maxFT = ceil(maxFT+2);
             else
                 maxFT = 0;
+                if minFT >= 0
+                    minFT = floor(min(obj.V.FT));
+                end
             end
             grid on; ylim([minFT maxFT]); xlim([0 obj.TotalTime]);
             ylabel('F_T (mN)'); xlabel('time (min)');
