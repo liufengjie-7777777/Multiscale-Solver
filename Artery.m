@@ -162,9 +162,9 @@ classdef Artery < handle
                     end
 
                     if (obj.lMD + obj.LLA0 + obj.LS20) > dMAi(j) && dMAi(j) >= obj.lMD
-                        x2i = sqrt(LS2i.^2 - (dMAi(j)-obj.lMD-LLAi).^2);
                         y2i = dMAi(j) - obj.lMD - LLAi;
-
+                        x2i = sqrt(LS2i.^2 - y2i.^2);
+                        
                         x2ci = x2i + LLAi.*sin(obj.alphaPS);
                         y2ci = dMAi(j) - obj.lMD - LLAi.*cos(obj.alphaPS);
                         
