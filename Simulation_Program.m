@@ -14,7 +14,7 @@ else
 end
 
 paraName = 'alphaPS';
-paraVec = [30:10:70] * pi/180;
+paraVec = [60:5:70] * pi/180;
 
 VarName = {'lambda','Pin'};
 lambdaValues = linspace(1,1.6,5);
