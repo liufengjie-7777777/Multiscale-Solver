@@ -13,49 +13,55 @@ else
     Sim = 'Uniaxial';
 end
 
+paraName = 'alphaPS';
+paraVec = [30:10:70] * pi/180;
+
 VarName = {'lambda','Pin'};
+lambdaValues = linspace(1,1.6,5);
+PinValues = linspace(80,110,4); %mmHg
 
-lambdaValues = linspace(0.5,2,16);
-PinValues = linspace(40,110,8); %mmHg
-
-saveDir = 'Simulation lzandPin\';
+saveDir = [paraName ' Simulation lzandPin\'];
 mkdir(saveDir);
 
-a.PrintProgress = 0;
+for k=1:length(paraVec)
+    a.(paraName) = paraVec(k);
+    
+    a.PrintProgress = 0;
+    
+    SimCount = 1; 
+    for n1=1:length(lambdaValues)
+        for n2=1:length(PinValues)
+            if ~a.InitialParameters
+                SamplePoints = length(a.V.time);
+            end
 
-SimCount = 1; 
-for n1=1:length(lambdaValues)
-    for n2=1:length(PinValues)
-        if ~a.InitialParameters
-            SamplePoints = length(a.V.time);
-        end
-        
-        a.cs.lambda = lambdaValues(n1);
-        a.cs.Pin = PinValues(n2)*133.322387415*1e-6;
-        
-        fprintf('(%d) Now simulating %s=%.2f and %s=%.2f (mmHg)\n',SimCount,'\lambda',lambdaValues(n1),'Pin',PinValues(n2));
-        if ~a.InitialParameters
-            SamplePoints = length(a.V.time);
-            %Active Simulation
-            for i=1:SamplePoints
-                if i==1 || (i>100 && mod(i,100)==0)
-                    fprintf('(%d/%d) Time=%.1f min: ',i,SamplePoints,a.V.time(i));
-                end
-                tic
-                if a.stepCalc(i)
-                    fprintf('Error calculating current step\n');
-                    i = SamplePoints+1; %#ok<FXSET>
-                else
-                    eTime = toc;
+            a.cs.lambda = lambdaValues(n1);
+            a.cs.Pin = PinValues(n2)*133.322387415*1e-6;
+
+            fprintf('(%d) Now simulating %s_{(%d)}=%.3f %s=%.2f and %s=%.2f (mmHg)\n',SimCount,paraName,k,a.alphaPS*180/pi,'\lambda',lambdaValues(n1),'Pin',PinValues(n2));
+            if ~a.InitialParameters
+                SamplePoints = length(a.V.time);
+                %Active Simulation
+                for i=1:SamplePoints
                     if i==1 || (i>100 && mod(i,100)==0)
-                        fprintf('(Step time is %.2f sec. Elapsed time is %.1f min)\n',eTime,(SamplePoints-i)*eTime/60);
+                        fprintf('(%d/%d) Time=%.1f min: ',i,SamplePoints,a.V.time(i));
+                    end
+                    tic
+                    if a.stepCalc(i)
+                        fprintf('Error calculating current step\n');
+                        i = SamplePoints+1; %#ok<FXSET>
+                    else
+                        eTime = toc;
+                        if i==1 || (i>100 && mod(i,100)==0)
+                            fprintf('(Step time is %.2f sec. Elapsed time is %.1f min)\n',eTime,(SamplePoints-i)*eTime/60);
+                        end
                     end
                 end
+                
+                save([saveDir Sim paraName '(' num2str(k) ')' '_' 'Simulation' '(' num2str(SimCount) ').mat'],'a');
+                SimCount = SimCount + 1;
             end
-            
-            save([saveDir Sim ' Simulation' '(' num2str(SimCount) ').mat'],'a');
-            SimCount = SimCount + 1;
         end
     end
-end
 
+end
