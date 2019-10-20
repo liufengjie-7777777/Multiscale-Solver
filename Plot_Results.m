@@ -363,10 +363,11 @@ xlim([0.4 1.6]); grid on;
 
 %%
 %Plot SS Do and FT for different Pin and lz
+clear all; close all; clc;
 
 Sim = 'Biaxial';
 
-n = [16,8];
+n = [5,4];
 
 N = n(1)*n(2); %number of files to open
 
@@ -375,47 +376,54 @@ N = n(1)*n(2); %number of files to open
 %lineSpec = {'-','--','-.',':','-','--','-.',':','-'};
 
 b = SimArteryVessel;
-Do = zeros(n); FT = Do;
+Do = zeros(3,n(1),n(2)); FT = Do;
 
 lz = zeros(n(1),1); %linspace(0.5,2,16);
 Pin = zeros(n(2),1); %linspace(40,110,8);
 
-for k1=1:n(1)
-    for k2=1:n(2)
-        load(['Simulation lzandPin\' Sim ' Simulation' '(' num2str(n(2)*(k1-1)+k2) ').mat']);
-        
-        %Update material parameters that changed
-        b.UpdateParameters(a);
-        %strLegend{n} = [varName ' = ' num2str(b.(varName)) ' (?)'];
-        
-        %Update vectors
-        b.riVec = a.V.ri;
-        b.ufsVec = a.V.ufsN;
-        b.nAMpVec = a.V.nAMp;
-        b.nAMVec = a.V.nAM;
-        b.timeVec = a.V.time;
-        
-        i = length(b.timeVec);
-        
-        b.ri = b.riVec(i);
-        b.ufs = b.ufsVec(i,:);
-        b.nAMp = b.nAMpVec(i);
-        b.nAM = b.nAMVec(i);
-        
-        Do(k1,k2) = b.ro*2e3; %um
-        FT(k1,k2) = b.FTCalc*1e3; %mN
-        
-        lz(k1) = b.lz;
-        if k1==1
-            Pin(k2) = b.Pin/(133.322387415*1e-6); %Convert to mmHg
+for k3=1:3
+    for k1=1:n(1) %lz
+        for k2=1:n(2) %Pin
+            %load(['Simulation lzandPin\' Sim ' Simulation' '(' num2str(n(2)*(k1-1)+k2) ').mat']);
+            load(['alphaPS Simulation lzandPin\' Sim 'alphaPS(' num2str(k3) ')' '_Simulation' '(' num2str(n(2)*(k1-1)+k2) ').mat']);
+
+
+            %Update material parameters that changed
+            b.UpdateParameters(a);
+            %strLegend{n} = [varName ' = ' num2str(b.(varName)) ' (?)'];
+
+            %Update vectors
+            b.riVec = a.V.ri;
+            b.ufsVec = a.V.ufsN;
+            b.nAMpVec = a.V.nAMp;
+            b.nAMVec = a.V.nAM;
+            b.timeVec = a.V.time;
+
+            i = length(b.timeVec);
+
+            b.ri = b.riVec(i);
+            b.ufs = b.ufsVec(i,:);
+            b.nAMp = b.nAMpVec(i);
+            b.nAM = b.nAMVec(i);
+
+            Do(k3,k1,k2) = b.ro*2e3; %um
+            FT(k3,k1,k2) = b.FTCalc*1e3; %mN
+
+            lz(k1) = b.lz;
+            if k1==1
+                Pin(k2) = b.Pin/(133.322387415*1e-6); %Convert to mmHg
+            end
         end
     end
 end
 
+
+if 0
 figure();
 clear strLegend;
+
 for k2=1:n(2)
-    plot(lz,Do(:,k2));
+    plot(lz,Do(k3,:,k2));
     hold on;
     strLegend{k2} = [num2str(Pin(k2)) ' mmHg'];
 end
@@ -444,3 +452,34 @@ end
 hold off;
 legend(strLegend);
 xlabel('Pin (mmHg)'); ylabel('Do (\mum)');
+else
+    
+    [xx,yy] = meshgrid(Pin,lz);
+    
+    symVec = {'ok','xb','^r'};
+    
+    for i=1:size(Do,1)
+        zz = zeros(size(Do,2),size(Do,3));
+        for j=1:size(Do,2)
+            for k=1:size(Do,3)
+                zz(j,k) = Do(i,j,k);
+            end
+        end
+        
+        h(i,:) = plot3(xx,yy,zz,symVec{i});
+        if i == 1
+            hold on;
+        end
+        
+    end
+    hold off;
+    
+    xlabel('Pin (mmHg)'); ylabel('\lambda_z'); zlabel('Do (\mum)');
+    
+    legend([h(1,1),h(2,1),h(3,1)],'60','65','70');
+    grid on;
+    
+end
+
+
+
