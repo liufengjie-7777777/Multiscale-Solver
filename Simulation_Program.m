@@ -13,7 +13,7 @@ else
     Sim = 'Uniaxial';
 end
 
-paraName = 'lLA0';
+paraName = 'LLA0';
 paraVec = [7,10,15]*1e-6;
 
 VarName = {'lambda','Pin'};
@@ -38,7 +38,7 @@ for k=1:length(paraVec)
             a.cs.lambda = lambdaValues(n1);
             a.cs.Pin = PinValues(n2)*133.322387415*1e-6;
 
-            fprintf('(%d) Now simulating %s_{(%d)}=%.3f %s=%.2f and %s=%.2f (mmHg)\n',SimCount,paraName,k,a.(paraName),'\lambda',lambdaValues(n1),'Pin',PinValues(n2));
+            fprintf('(%d) Now simulating %s_{(%d)}=%.3f %s=%.2f and %s=%.2f (mmHg)\n',SimCount,paraName,k,a.(paraName)*1e6,'\lambda',lambdaValues(n1),'Pin',PinValues(n2));
             if ~a.InitialParameters
                 SamplePoints = length(a.V.time);
                 %Active Simulation

@@ -372,7 +372,7 @@ n = [5,4,3]; %[lambda, Pin, parValues]
 N = n(1)*n(2); %number of files to open
 
 b = SimArteryVessel;
-Do = zeros(n); FT = Do;
+Do = zeros(3,n(1),n(2)); FT = Do;
 lz = zeros(n(1),1);
 Pin = zeros(n(2),1);
 
@@ -447,7 +447,7 @@ hold off;
 legend(strLegend);
 xlabel('Pin (mmHg)'); ylabel('Do (\mum)');
 else
-    %3D plot for several material parameters values
+    %Plotting a 3d 
     symVec = {'ok','xb','sr'};
     [xPin,ylz] = meshgrid(Pin,lz);
     
@@ -459,7 +459,7 @@ else
     end
     hold off;
     xlabel('Pin (mmHg)'); ylabel('\lambda_z'); zlabel('Do (\mum)');
-    legend([h(1,1),h(2,1),h(3,1)],strLegend);
+    legend([h(1,1),h(2,1),h(3,1)],'60','65','70');
     grid on;
     
     figure();
@@ -471,7 +471,7 @@ else
     end
     hold off;
     xlabel('Pin (mmHg)'); ylabel('\lambda_z'); zlabel('F_T (mN)');
-    legend([h(1,1),h(2,1),h(3,1)],strLegend);
+    legend([h(1,1),h(2,1),h(3,1)],'60','65','70');
     grid on; 
 end
 
