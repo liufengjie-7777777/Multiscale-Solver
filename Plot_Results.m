@@ -413,41 +413,45 @@ for k3=1:n(3) %Parameter Values
 end
 
 if 0
-figure();
-clear strLegend;
-
-for k2=1:n(2)
-    plot(lz,Do(k3,:,k2));
-    hold on;
-    strLegend{k2} = [num2str(Pin(k2)) ' mmHg'];
-end
-hold off;
-legend(strLegend);
-xlabel('\lambda_z'); ylabel('Do (\mum)');
-
-figure();
-clear strLegend;
-for k2=1:n(2)
-    plot(lz,FT(:,k2));
-    hold on;
-    strLegend{k2} = [num2str(Pin(k2)) ' mmHg'];
-end
-hold off;
-legend(strLegend);
-xlabel('\lambda_z'); ylabel('FT (mN)');
-
-figure();
-clear strLegend;
-for k1=1:n(1)
-    plot(Pin,Do(k1,:));
-    hold on;
-    strLegend{k1} = num2str(lz(k1));
-end
-hold off;
-legend(strLegend);
-xlabel('Pin (mmHg)'); ylabel('Do (\mum)');
+    %Plot Do and FT for different Pin and lz
+    
+    %Do versus lz for different Pin
+    figure();
+    clear strLegend;
+    for k2=1:n(2)
+        plot(lz,Do(:,k2,1));
+        hold on;
+        strLegend{k2} = ['P_{in} = ' num2str(Pin(k2)) ' mmHg'];
+    end
+    hold off;
+    xlabel('\lambda_z'); ylabel('Do (\mum)');
+    legend(strLegend);
+    
+    %FT versus lz for different Pin
+    figure();
+    clear strLegend;
+    for k2=1:n(2)
+        plot(lz,FT(:,k2,1));
+        hold on;
+        strLegend{k2} = ['P_{in} = ' num2str(Pin(k2)) ' mmHg'];
+    end
+    hold off;
+    xlabel('\lambda_z'); ylabel('F_T (mN)');
+    legend(strLegend);
+    
+    %Do versus Pin for different lz
+    figure();
+    clear strLegend;
+    for k1=1:n(1)
+        plot(Pin,Do(k1,:,1));
+        hold on;
+        strLegend{k1} = ['\lambda_z = ' num2str(lz(k1))];
+    end
+    hold off;
+    xlabel('Pin (mmHg)'); ylabel('Do (\mum)');
+    legend(strLegend);
 else
-    %3D plot for several material parameters values
+    %3D plot of Do and FT versus Pin and lz, for several material parameters values
     symVec = {'ok','xb','sr'};
     [xPin,ylz] = meshgrid(Pin,lz);
     
@@ -459,7 +463,7 @@ else
     end
     hold off;
     xlabel('Pin (mmHg)'); ylabel('\lambda_z'); zlabel('Do (\mum)');
-    legend([h(1,1),h(2,1),h(3,1)],strLegend);
+    legend(h(:,1),strLegend);
     grid on;
     
     figure();
@@ -471,7 +475,7 @@ else
     end
     hold off;
     xlabel('Pin (mmHg)'); ylabel('\lambda_z'); zlabel('F_T (mN)');
-    legend([h(1,1),h(2,1),h(3,1)],strLegend);
+    legend(h(:,1),strLegend);
     grid on; 
 end
 
