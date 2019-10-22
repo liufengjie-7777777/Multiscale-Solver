@@ -259,30 +259,33 @@ end
 %Plot SS Do and FT in parameter scaling
 
 Sim = 'Biaxial';
-%varName = {'alphaPS','AS2','beta','deltam','dMA0','LLA0','lMD','LMmax','LS20'};
-varName = {'LLA0','lMD','LMmax','LS20','dMA0','deltam','alphaPS','AS2'};
+
+%Material Parameters to plot 
+
+ %varName = {'LLA0','lMD','LMmax','LS20','dMA0','deltam','alphaPS','AS2'};
+ %strLegend = {'L_{LA0}','l_{MD}','L_{Mmax}','L_{S20}','dMA0','\delta_m','\alpha_{PS}','A_{S2}'};
+
+varName = {'alphaPS','LLA0','lMD','LS20'}; %{'LMmax','dMA0','deltam','AS2'};
+strLegend = {'\alpha_{PS}','L_{LA0}','l_{MD}','L_{S20}'}; %{'L_{Mmax}','dMA0','\delta_m','A_{S2}'};
+
 N = length(varName); %number of files to open
 
-%strLegend = {'\alpha_{PS}','A_{S2}','\beta','\delta_m','dMA0','L_{LA0}','l_{MD}','L_{Mmax}','L_{S20}'};
-strLegend = {'L_{LA0}','l_{MD}','L_{Mmax}','L_{S20}','dMA0','\delta_m','\alpha_{PS}','A_{S2}'};
 marker = {'+','o','*','.','s','d','^','v','<','>','p','h'};
 lineSpec = {'-','--','-.',':','-','--','-.',':','-'};
 
-%legendOptions
-%['\alpha_{PS} = ' num2str(b.alphaPS*180/pi) '^o']
-
 b = SimArteryVessel;
-Do = zeros(25,N);
-FT = Do;
-%strLegend = strings(1,N);
+Do = zeros(25,N); FT = Do;
+
+scaling = linspace(0.4,1.6,size(Do,1)); %Original scaling vector
+
 for n=1:N
     for k=1:size(Do,1)
         load(['Simulation Results2\' varName{n} ' Simulations\' Sim 'Simulation-' varName{n} '(' num2str(k) ').mat']);
-
+        
         %Update material parameters that changed
         b.UpdateParameters(a);
         %strLegend{n} = [varName ' = ' num2str(b.(varName)) ' (?)'];
-
+        
         %Update vectors
         b.riVec = a.V.ri;
         b.ufsVec = a.V.ufsN;
@@ -302,63 +305,88 @@ for n=1:N
     end
 end
 
-DoCom = 834.6234;
-FTCom  = 4.5765;
+DoCom = 834.6234; %um
+FTCom  = 4.5765; %mN
 
-DoErr = (Do-DoCom)/DoCom*100;
-FTErr = (FT-FTCom)/FTCom*100;
-scaling = linspace(0.4,1.6,size(DoErr,1));
+DoErr = ((Do-DoCom)./DoCom).*100; %Relative Error (%)
+FTErr = ((FT-FTCom)./FTCom).*100; %Relative Error (%)
 
-figure();
-subplot(1,2,1);
-for n=1:4
-    plot(scaling,DoErr(:,n),lineSpec{n});
-    hold on;
+if 0 %Split two groups of variables
+    buff = floor(N/2);
+    
+    %Plotting DoErr vs scaling factor
+    figure();
+    
+    %Plot DoErr vs scaling factor for 1st group
+    subplot(1,2,1);
+    for n=1:buff
+        plot(scaling,DoErr(:,n),lineSpec{n});
+        hold on;
+    end
+    hold off;
+    legend(strLegend{1:buff});
+    ylabel('Do Difference (%)'); xlabel('Parameter Scaling (-)');
+    xlim([scaling(1) scaling(end)]); grid on;
+
+    %Plot DoErr vs scaling factor for 2nd group
+    subplot(1,2,2);
+    for n=(buff+1):length(strLegend)
+        plot(scaling,DoErr(:,n),lineSpec{n});
+        hold on;
+    end
+    hold off;
+    legend(strLegend{(buff+1):end});
+    ylabel('Do Difference (%)'); xlabel('Parameter Scaling (-)');
+    xlim([scaling(1) scaling(end)]); grid on;
+    
+    %Plotting FTErr vs scaling factor
+    figure();
+    
+    %Plot FTErr vs scaling factor for 1st group
+    subplot(1,2,1);
+    for n=1:buff
+        plot(scaling,FTErr(:,n),lineSpec{n});
+        hold on;
+    end
+    hold off;
+    legend(strLegend{1:buff});
+    ylabel('F_T Difference (%)'); xlabel('Parameter Scaling (-)');
+    xlim([scaling(1) scaling(end)]); grid on;
+    
+    %Plot FTErr vs scaling factor for 2nd group
+    subplot(1,2,2);
+    for n=(buff+1):length(strLegend)
+        plot(scaling,FTErr(:,n),lineSpec{n});
+        hold on;
+    end
+    hold off;
+    legend(strLegend{(buff+1):end});
+    ylabel('F_T Difference (%)'); xlabel('Parameter Scaling (-)');
+    xlim([scaling(1) scaling(end)]); grid on;
+else %Normal Plotting
+    %Plotting DoErr and FTErr vs scaling factor
+    figure();
+    
+    %Plot DoErr vs scaling factor
+    subplot(1,2,1);
+    for n=1:N
+        plot(scaling,DoErr(:,n),lineSpec{n});
+        hold on;
+    end
+    hold off;
+    legend(strLegend{1:N});
+    ylabel('Do Difference (%)'); xlabel('Parameter Scaling (-)');
+    xlim([scaling(1) scaling(end)]); grid on;
+
+    %Plot FTErr vs scaling factor
+    subplot(1,2,2);
+    for n=1:N
+        plot(scaling,FTErr(:,n),lineSpec{n});
+        hold on;
+    end
+    hold off;
+    legend(strLegend{1:N});
+    ylabel('F_T Difference (%)'); xlabel('Parameter Scaling (-)');
+    xlim([scaling(1) scaling(end)]); grid on;
 end
-hold off;
-legend(strLegend{1:n});
-ylabel('Do Difference (%)'); xlabel('Parameter Scaling (-)');
-xlim([0.4 1.6]); grid on;
-
-%figure();
-subplot(1,2,2);
-
-lineSpec = {'-','--','-.',':','-','--','-.',':','-'};
-
-for n=5:length(strLegend)
-    plot(scaling,DoErr(:,n),lineSpec{n});
-    hold on;
-end
-hold off;
-legend(strLegend{5:end});
-ylabel('Do Difference (%)'); xlabel('Parameter Scaling (-)');
-xlim([0.4 1.6]); grid on;
-
-figure();
-subplot(1,2,1);
-lineSpec = {'-','--','-.',':','-','--','-.',':','-'};
-
-for n=1:4
-    plot(scaling,FTErr(:,n),lineSpec{n});
-    hold on;
-end
-hold off;
-legend(strLegend{1:n});
-ylabel('F_T Difference (%)'); xlabel('Parameter Scaling (-)');
-xlim([0.4 1.6]); grid on;
-
-%figure();
-subplot(1,2,2);
-lineSpec = {'-','--','-.',':','-','--','-.',':','-'};
-
-for n=5:length(strLegend)
-    plot(scaling,FTErr(:,n),lineSpec{n});
-    hold on;
-end
-
-hold off;
-legend(strLegend{5:end});
-ylabel('F_T Difference (%)'); xlabel('Parameter Scaling (-)');
-xlim([0.4 1.6]); grid on;
-
 
