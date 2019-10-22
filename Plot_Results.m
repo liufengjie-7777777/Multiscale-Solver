@@ -365,7 +365,9 @@ xlim([0.4 1.6]); grid on;
 %Plot SS Do and FT for different Pin and lz
 clear all; close all; clc;
 
-varName = 'LLA0'; unitDets = {1e6,'(\mum)'};
+%Material Parameter
+ %varName = 'LLA0'; unitDets = {1e6,'(\mum)'};
+varName = 'alphaPS'; unitDets = {180/pi,'^o'};
 
 Sim = 'Biaxial';
 n = [5,4,3]; %[lambda, Pin, parValues]
