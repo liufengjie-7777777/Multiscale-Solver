@@ -270,7 +270,7 @@ unitDets = {180/pi,'^o';1e6,'\mum';1e6,'\mum';1e6,'\mum'};
 varName = {'alphaPS','LLA0','lMD','LS20'}; %{'LMmax','dMA0','deltam','AS2'};
 strLegend = {'\alpha_{PS}','L_{LA0}','l_{MD}','L_{S20}'}; %{'L_{Mmax}','dMA0','\delta_m','A_{S2}'};
 
-N = length(varName); %number of files to open
+N = length(varName); %number of material parameters
 
 marker = {'+','o','*','.','s','d','^','v','<','>','p','h'};
 lineSpec = {'-','--','-.',':','-','--','-.',':','-'};
