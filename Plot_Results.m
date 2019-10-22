@@ -265,6 +265,8 @@ Sim = 'Biaxial';
  %varName = {'LLA0','lMD','LMmax','LS20','dMA0','deltam','alphaPS','AS2'};
  %strLegend = {'L_{LA0}','l_{MD}','L_{Mmax}','L_{S20}','dMA0','\delta_m','\alpha_{PS}','A_{S2}'};
 
+unitDets = {180/pi,'^o';1e6,'\mum';1e6,'\mum';1e6,'\mum'};
+
 varName = {'alphaPS','LLA0','lMD','LS20'}; %{'LMmax','dMA0','deltam','AS2'};
 strLegend = {'\alpha_{PS}','L_{LA0}','l_{MD}','L_{S20}'}; %{'L_{Mmax}','dMA0','\delta_m','A_{S2}'};
 
@@ -277,6 +279,7 @@ b = SimArteryVessel;
 Do = zeros(25,N); FT = Do;
 
 scaling = linspace(0.4,1.6,size(Do,1)); %Original scaling vector
+paraVals = zeros(size(Do,N));
 
 for n=1:N
     for k=1:size(Do,1)
@@ -302,6 +305,8 @@ for n=1:N
         
         Do(k,n) = b.ro*2e3; %um
         FT(k,n) = b.FTCalc*1e3; %mN
+        
+        paraVals(k,n) = b.(varName{n});
     end
 end
 
@@ -388,5 +393,26 @@ else %Normal Plotting
     legend(strLegend{1:N});
     ylabel('F_T Difference (%)'); xlabel('Parameter Scaling (-)');
     xlim([scaling(1) scaling(end)]); grid on;
+    
+    %Plot separately for each material parameter
+    for n=1:N
+        figure();
+        %Plot DoErr vs scaling factor
+        subplot(1,2,1);
+        plot(paraVals(:,n)*unitDets{n,1},DoErr(:,n));
+        
+        %legend(strLegend{1:N});
+        ylabel('Do Difference (%)'); xlabel([strLegend{n} ' (' unitDets{n,2} ')']);
+        grid on; xlim([paraVals(1,n) paraVals(end,n)]*unitDets{n,1});
+        
+        %Plot FTErr vs scaling factor
+        subplot(1,2,2);
+        plot(paraVals(:,n)*unitDets{n,1},FTErr(:,n));
+        
+        %legend(strLegend{1:N});
+        ylabel('F_T Difference (%)'); xlabel([strLegend{n} ' (' unitDets{n,2} ')']);
+        grid on; xlim([paraVals(1,n) paraVals(end,n)]*unitDets{n,1});
+    end
+    
 end
 
