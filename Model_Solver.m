@@ -10,7 +10,7 @@ else
     a.cs.ltG = 1.69; %Circumferential stretch ratio
 end
 
-a.alphaPS = 30*pi/180; %rad
+%a.alphaPS = 30*pi/180; %rad
 
 if ~a.InitialParameters
     SamplePoints = length(a.V.time);
