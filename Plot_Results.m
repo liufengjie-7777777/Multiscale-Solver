@@ -414,7 +414,7 @@ for k3=1:n(3) %Parameter Values
     end
 end
 
-if 1
+if 0
     %Plot Do and FT for different Pin and lz
     
     %Do versus lz for different Pin
