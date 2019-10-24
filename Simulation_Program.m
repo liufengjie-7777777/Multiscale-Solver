@@ -13,8 +13,8 @@ else
     Sim = 'Uniaxial';
 end
 
-paraName = 'LLA0';
-paraVec = [7,10,15]*1e-6;
+paraName = 'LS20';
+paraVec = [50,65,80]*1e-6;
 
 VarName = {'lambda','Pin'};
 lambdaValues = linspace(1,1.6,5);
