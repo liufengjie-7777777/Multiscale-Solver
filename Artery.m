@@ -120,6 +120,9 @@ classdef Artery < handle
         function I4SMCz = I4SMCz(obj)
             I4SMCz = obj.cs.lz.^2; %from #12
         end
+        function I4f = I4f(obj,a)
+            I4f = (obj.cs.lt.^2).*(sin(a)^2) + (obj.cs.lz.^2)*(cos(a)^2);
+        end
         
         function obj = dMAiMA0(obj)
             obj.cs.dMArMA0 = obj.kMAi(1)*(sqrt(obj.I4SMCr)-1) + 1;
@@ -222,17 +225,29 @@ classdef Artery < handle
         end
         
         %Stress Functions(:,1)-r (:,2)-theta (:,3)-z
-        function obj = sECM(obj)             
+        function obj = sECM(obj)
             aj = obj.alphaj(1:4);
             obj.cs.sECM = sym(zeros(3,length(obj.cs.lr)));
+            z = 1;
             for j=1:length(obj.cs.lr)
-                C1 = (obj.cs.lt(j)^2).*sin(aj).^2 + (obj.cs.lz^2)*cos(aj).^2 - 1;
+                
+                C1 = (obj.cs.lt(j)^2).*sin(aj).^2 + (obj.cs.lz(z)^2)*cos(aj).^2 - 1;
+                
+                %Calc numeric value of C1 to determine I4f=C1+1 
+                C1Num = subs(C1,'ri',obj.cs.riNum);
+                C1(C1Num<0) = 0;
+                if ~isempty(C1(C1==0))
+                    vpa(C1Num,2)
+                end
                 
                 obj.cs.sECM(:,j) = [...
                     obj.Cp.*obj.cs.lr(j).^2;
-                    obj.cs.lt(j)^2.*(obj.Cp + sum( obj.c(1,:).*exp( obj.c(2,:).*C1.^2).*(sin(aj).^2).*C1 ) );
-                    obj.cs.lz^2.*(obj.Cp + sum( obj.c(1,:).*exp( obj.c(2,:).*C1.^2).*(cos(aj).^2).*C1 ) );
+                    obj.cs.lt(j)^2.*(obj.Cp + sum( obj.c(1,:).*exp(obj.c(2,:).*C1.^2).*(sin(aj).^2).*C1 ) );
+                    obj.cs.lz(z)^2.*(obj.Cp + sum( obj.c(1,:).*exp(obj.c(2,:).*C1.^2).*(cos(aj).^2).*C1 ) );
                     ];
+                if length(obj.cs.lz) > 1
+                    z = z+1;
+                end
             end
         end
         function obj = sSMC(obj)

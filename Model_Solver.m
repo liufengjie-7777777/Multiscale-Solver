@@ -3,11 +3,17 @@ clear all; close all; clc; %#ok<CLALL>
 %Define a as artrey and calc n
 if input('Which experiment do you want to simulate?\nEnter 1 for biaxial and 0 for uniaxial: ')
     a = ArteryVessel;
-    a.cs.Pin = 90*133.322387415*1e-6; %Inner pressure
+    a.cs.Pin = 90*133.322387415e-6; %Inner pressure
     a.cs.lambda = 1.5; %Axial loaded stretch ratio 
 else
     a = ArteryStrip;
     a.cs.ltG = 1.69; %Circumferential stretch ratio
+end
+
+Pin = linspace(0,90,10);
+for i=1:length(Pin)
+    a.cs.Pin = Pin(i)*133.322387415e-6;
+    a.InitialParameters;
 end
 
 if ~a.InitialParameters
