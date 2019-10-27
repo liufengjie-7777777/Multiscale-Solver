@@ -10,7 +10,11 @@ else
     a.cs.ltG = 1.69; %Circumferential stretch ratio
 end
 
-%a.alphaPS = 30*pi/180; %rad
+Pin = linspace(0,90,10);
+for i=1:length(Pin)
+    a.cs.Pin = Pin(i)*133.322387415e-6;
+    a.InitialParameters;
+end
 
 if ~a.InitialParameters
     SamplePoints = length(a.V.time);

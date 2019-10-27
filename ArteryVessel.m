@@ -56,7 +56,7 @@ classdef ArteryVessel < Artery
             f = sum( ((St-Sr)./obj.cs.x).*obj.cs.w );
             
             if obj.cs.riNum %Use the previous riNum value for the numeric sol
-            	riNew = double(vpasolve(f == obj.cs.Pin,[0.9*obj.cs.riNum 1.1*obj.cs.riNum]));
+            	riNew = double(vpasolve(f == obj.cs.Pin,[0.8*obj.cs.riNum 1.2*obj.cs.riNum]));
             else 
             	riNew = double(vpasolve(f == obj.cs.Pin,[0 2]));
             end
@@ -92,6 +92,7 @@ classdef ArteryVessel < Artery
             %dMAiMA0,LMi,Lfoi and eS2)
             obj.ufsUpdate;
             %Update the active stress components
+            obj.sECM;
             obj.sSMC;
             obj.sMMy;
             
@@ -109,7 +110,7 @@ classdef ArteryVessel < Artery
         end
         
         function [err] = InitialParameters(obj)
-            obj.cs.riNum = 0;
+            %obj.cs.riNum = 0;
             
             obj.nCalc;
             
