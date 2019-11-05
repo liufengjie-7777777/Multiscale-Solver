@@ -10,8 +10,8 @@ else
     a.cs.ltG = 1.69; %Circumferential stretch ratio
 end
 
-% a.LMmax = 1.5e-3; %um to mm - same  units as delta_m
-% a.EAMp = 0.18e3; %GPa to MPa
+a.LMmax = 1.5e-3; %um to mm - same  units as delta_m
+a.EAMp = 0.1e3; %GPa to MPa
 
 Pin = linspace(0,90,10);
 for i=1:length(Pin)
