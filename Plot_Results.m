@@ -265,9 +265,13 @@ Sim = 'Biaxial';
  %varName = {'LLA0','lMD','LMmax','LS20','dMA0','deltam','alphaPS','AS2'};
  %strLegend = {'L_{LA0}','l_{MD}','L_{Mmax}','L_{S20}','dMA0','\delta_m','\alpha_{PS}','A_{S2}'};
 
-varName = {'alphaPS','LLA0','lMD','LS20'}; %{'LMmax','dMA0','deltam','AS2'};
-strLegend = {'\alpha_{PS}','L_{LA0}','l_{MD}','L_{S20}'}; %{'L_{Mmax}','dMA0','\delta_m','A_{S2}'};
-unitDets = {180/pi,'^o';1e6,'\mum';1e6,'\mum';1e6,'\mum'};
+ %varName = {'alphaPS','LLA0','lMD','LS20'}; %{'LMmax','dMA0','deltam','AS2'};
+ %strLegend = {'\alpha_{PS}','L_{LA0}','l_{MD}','L_{S20}'}; %{'L_{Mmax}','dMA0','\delta_m','A_{S2}'};
+ %unitDets = {180/pi,'^o';1e6,'\mum';1e6,'\mum';1e6,'\mum'};
+
+varName = {'alphaPS'};
+strLegend = {'\alpha_{PS}'};
+unitDets = {180/pi,'^o'};
 
 N = length(varName); %number of material parameters
 
@@ -311,6 +315,7 @@ end
 
 DoCom = 834.6234; %um
 FTCom  = 4.5765; %mN
+
 
 DoErr = ((Do-DoCom)./DoCom).*100; %Relative Error (%)
 FTErr = ((FT-FTCom)./FTCom).*100; %Relative Error (%)
@@ -381,7 +386,7 @@ else %Normal Plotting
     legend(strLegend{1:N});
     ylabel('Do Difference (%)'); xlabel('Parameter Scaling (-)');
     xlim([scaling(1) scaling(end)]); grid on;
-
+    
     %Plot FTErr vs scaling factor
     subplot(1,2,2);
     for n=1:N

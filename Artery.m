@@ -36,7 +36,6 @@ classdef Artery < handle
         %Parameters Obtained by Fitting Contraction Data (Table 2)
         beta = 0.14; %(s*MPa)^-1
         EAMp = 0.24e3; %GPa to MPa
-        %EAM = 0.072e3; %0.3*EAMp - According to the paper
         kMAi = [0.93 0.35]; %1-K_MAr, 2-K_MAz;
         cfo = 8.85;
         ufoOpt = 1.85;

@@ -10,8 +10,10 @@ else
     a.cs.ltG = 1.69; %Circumferential stretch ratio
 end
 
-% a.LMmax = 1.5e-3; %um to mm - same  units as delta_m
-% a.EAMp = 0.18e3; %GPa to MPa
+% a.LMmax = a.LMmax*0.7; %um to mm - same  units as delta_m
+% a.EAMp = a.EAMp*1.43; %GPa to MPa
+
+a.alphaPS = 30*pi/180;
 
 Pin = linspace(0,90,10);
 for i=1:length(Pin)
@@ -38,3 +40,22 @@ if ~a.InitialParameters
     end
 end
 
+
+if 0
+save('SimulationPi90lz15-LMmax and EAMp decrease.mat','a')
+
+clear all; close all;
+
+load('SimulationPi90lz15.mat')
+plot(a.V.time,a.V.Do);
+hold on
+load('SimulationPi90lz15-LMmax decrease.mat')
+plot(a.V.time,a.V.Do);
+load('SimulationPi90lz15-LMmax and EAMp decrease.mat')
+plot(a.V.time(1:150:end),a.V.Do(1:150:end),'xr');
+
+xlabel('Time (min)'); ylabel('Do (\mum)');
+legend('Original values','0.7\timesL_{M,max}','0.7\timesL_{M,max} & 1.43\timesE_{AMp}');
+
+hold off
+end
