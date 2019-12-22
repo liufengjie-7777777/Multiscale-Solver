@@ -4,7 +4,14 @@ clear all; close all; clc; %#ok<CLALL>
 if input('Which experiment do you want to simulate?\nEnter 1 for biaxial and 0 for uniaxial: ')
     a = ArteryVessel;
     a.cs.Pin = 90*133.322387415*1e-6; %Inner pressure
-    a.cs.lambda = 1.5; %Axial loaded stretch ratio 
+    a.cs.lambda = 1.5; %Axial loaded stretch ratio
+    
+    Pin = linspace(0,90,10);
+for i=1:length(Pin)
+    a.cs.Pin = Pin(i)*133.322387415e-6;
+    a.InitialParameters;
+end
+
 else
     a = ArteryStrip;
     a.cs.ltG = 1.69; %Circumferential stretch ratio
@@ -12,14 +19,7 @@ end
 
 % a.LMmax = a.LMmax*0.7; %um to mm - same  units as delta_m
 % a.EAMp = a.EAMp*1.43; %GPa to MPa
-
 a.alphaPS = 30*pi/180;
-
-Pin = linspace(0,90,10);
-for i=1:length(Pin)
-    a.cs.Pin = Pin(i)*133.322387415e-6;
-    a.InitialParameters;
-end
 
 if ~a.InitialParameters
     SamplePoints = length(a.V.time);

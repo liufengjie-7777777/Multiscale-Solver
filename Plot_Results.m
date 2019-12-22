@@ -420,3 +420,30 @@ else %Normal Plotting
     
 end
 
+%%
+%Uniaxial Simulations plotting
+%%
+%%
+
+%Plot steady state Pisom as a function of lt
+N = 9; %number of files to open
+Sim = 'Uniaxial';
+varName = 'ltG';
+
+Pisom = zeros(N,1);
+lt = zeros(N,1);
+
+for n=1:N
+    load(['Simulation Results3\' varName ' Simulations\' Sim 'Simulation-' varName '(' num2str(n) ').mat']);
+    
+    Pisom(n) = a.V.Pisom(end)*1e3; %kPa
+    lt(n) = a.cs.(varName);
+end
+
+figure();
+f = fit(lt,Pisom,'poly2');
+plot(f,lt,Pisom);
+ylabel('Pisom (kPa)'); xlabel('\lambda_\theta');
+legend('Simulation Results','Fitted curve');
+
+

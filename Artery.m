@@ -231,7 +231,13 @@ classdef Artery < handle
                 C1 = (obj.cs.lt(j)^2).*sin(aj).^2 + (obj.cs.lz(z)^2)*cos(aj).^2 - 1;
                 
                 %Calc numeric value of C1 to determine I4f=C1+1 
-                C1Num = subs(C1,'ri',obj.cs.riNum);
+                if obj.cs.riNum>0
+                    C1Num = subs(C1,'ri',obj.cs.riNum);
+                elseif obj.cs.lrNum>0
+                    C1Num = subs(C1,'lr',obj.cs.lrNum);
+                else
+                    C1Num = 0;
+                end
                 C1(C1Num<0) = 0;
 %                 if ~isempty(C1(C1==0))
 %                     vpa(C1Num,2)
