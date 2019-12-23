@@ -110,16 +110,14 @@ classdef ArteryVessel < Artery
         end
         
         function [err] = InitialParameters(obj)
-            %obj.cs.riNum = 0;
-            
             obj.nCalc;
             
             %2nd Step - Calculate Passive State
-            obj.cs.ri = obj.cs.riG;
+            obj.cs.ri = obj.cs.riG; %Update ri to be symbolic
             
-            obj.xw;
-            obj.cs.r = obj.cs.x;
-            obj.cs.R = obj.R;
+            obj.xw; %Calculate Gaussian abscicess
+            obj.cs.r = obj.cs.x; %Update current radii vector
+            obj.cs.R = obj.R; %Update initial radii vector accordingly
             
             obj.cs.lr = obj.lr;
             obj.cs.lt = obj.lt;
@@ -139,7 +137,7 @@ classdef ArteryVessel < Artery
                 obj.ufsVecUpdate(1);
                 fprintf('Initial Passive Conditions: ');
                 fprintf('Do=%.3f, lr=%.3f, lt=%.3f, lz=%.3f, detF=%.3f \n',obj.cs.roNum*2e3,obj.cs.lrNum(2),obj.cs.ltNum(2),obj.cs.lzNum,(obj.cs.lrNum(2)*obj.cs.ltNum(2)*obj.cs.lzNum));
-                obj.V.InitialVectors(length(obj.V.time),0);
+                obj.V.InitialVectors(length(obj.V.time),1);
                 err = 0;
             end
         end

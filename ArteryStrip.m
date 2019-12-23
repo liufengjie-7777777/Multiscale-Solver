@@ -93,7 +93,7 @@ classdef ArteryStrip < Artery
                 obj.ufs0; %calcs numeric ufs0
                 fprintf('Initial Passive Conditions: ');
                 fprintf('lr=%.3f, lt=%.3f, lz=%.3f, det(F)=%.3f \n',obj.cs.lrNum,obj.cs.ltNum,obj.cs.lzNum,(obj.cs.lrNum*obj.cs.ltNum*obj.cs.lzNum));
-                obj.V.InitialVectors(length(obj.V.time),1);
+                obj.V.InitialVectors(length(obj.V.time),0);
                 err = 0;
             end
         end

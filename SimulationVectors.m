@@ -51,26 +51,26 @@ classdef SimulationVectors < handle
             obj.x2c = zeros(SamplePoints,2);
             obj.y2c = zeros(SamplePoints,2);
             
-            if Sim %Uniaxial Simulation
-                obj.ufs = zeros(SamplePoints,1);
-                obj.Pisom = zeros(SamplePoints,1);
-                obj.lr = zeros(SamplePoints,1);       
-            else %Biaxial Simulation
+            if Sim %Biaxial Simulation
                 obj.ufsN = zeros(SamplePoints,31);
                 obj.ufs = zeros(SamplePoints,1);
                 obj.ri = zeros(SamplePoints,1);
                 obj.Do = zeros(SamplePoints,1);
                 obj.FT = zeros(SamplePoints,1);
+            else %Uniaxial Simulation
+                obj.ufs = zeros(SamplePoints,1);
+                obj.Pisom = zeros(SamplePoints,1);
+                obj.lr = zeros(SamplePoints,1); 
             end
         end
         
         function obj = UpdateVectors(obj,i,cs)
-            if length(cs.lrNum)==1
+            if length(cs.lrNum)==1 %Uniaxial Simulation
                 j = 1;
                 symVar = cs.lrG;
                 numVar = cs.lrNum;
-            else
-                j = 2;
+            else %Biaxial Simulation
+                j = 2; %Saving results in the middle radii
                 symVar = cs.riG;
                 numVar = cs.riNum;
             end
