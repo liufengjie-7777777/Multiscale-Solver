@@ -3,7 +3,7 @@ clear all; close all; clc; %#ok<CLALL>
 %Define a as artrey and calc n
 if input('Which experiment do you want to simulate?\nEnter 1 for biaxial and 0 for uniaxial: ')
     a = ArteryVessel;
-    a.cs.lambda = 1.6; %Axial loaded stretch ratio
+    a.cs.lambda = 1.5; %Axial loaded stretch ratio
     
     Pin = linspace(0,90,10); %Inner pressure (mmHg)
 for i=1:length(Pin)

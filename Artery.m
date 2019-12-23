@@ -208,8 +208,10 @@ classdef Artery < handle
             obj.eS2;
             
             ufsdot = double(obj.beta*(obj.PCU-obj.PMM));
-            if ufsdot<0
-                obj.cs.ufs = obj.cs.ufs + ufsdot*obj.dt; %#ok<*MCNPN>
+            for i=1:length(ufsdot)
+                if ufsdot(i)<0
+                    obj.cs.ufs(i) = obj.cs.ufs(i) + ufsdot(i)*obj.dt; %#ok<*MCNPN>
+                end
             end
             %Save numeric I4SMCe value for uniaxial Pisom calc
             obj.cs.I4SMCeNum = obj.I4SMCe;
@@ -227,7 +229,6 @@ classdef Artery < handle
             obj.cs.sECM = sym(zeros(3,length(obj.cs.lr)));
             z = 1;
             for j=1:length(obj.cs.lr)
-                
                 C1 = (obj.cs.lt(j)^2).*sin(aj).^2 + (obj.cs.lz(z)^2)*cos(aj).^2 - 1;
                 
                 %Calc numeric value of C1 to determine I4f=C1+1 

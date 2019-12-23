@@ -32,7 +32,7 @@ classdef ArteryStrip < Artery
             if obj.cs.lrNum
                 lrNew = vpasolve(Sr == Sz,obj.cs.lrG,[0.9*obj.cs.lrNum 1.1*obj.cs.lrNum]);
             else
-                lrNew = vpasolve(Sr == Sz,obj.cs.lrG,[0 2]);
+                lrNew = vpasolve(Sr == Sz,obj.cs.lrG,[0 Inf]);
             end
             if isempty(lrNew)
                 fprintf('Error calculating lr\n');

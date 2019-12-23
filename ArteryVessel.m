@@ -57,8 +57,8 @@ classdef ArteryVessel < Artery
             
             if obj.cs.riNum %Use the previous riNum value for the numeric sol
             	riNew = double(vpasolve(f == obj.cs.Pin,[0.8*obj.cs.riNum 1.2*obj.cs.riNum]));
-            else 
-            	riNew = double(vpasolve(f == obj.cs.Pin,[0 2]));
+            else
+            	riNew = double(vpasolve(f == obj.cs.Pin,[0 Inf]));
             end
             
             if isempty(riNew)
