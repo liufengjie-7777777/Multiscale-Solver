@@ -269,9 +269,18 @@ Sim = 'Biaxial';
  %strLegend = {'\alpha_{PS}','L_{LA0}','l_{MD}','L_{S20}'}; %{'L_{Mmax}','dMA0','\delta_m','A_{S2}'};
  %unitDets = {180/pi,'^o';1e6,'\mum';1e6,'\mum';1e6,'\mum'};
 
-varName = {'alphaPS'};
-strLegend = {'\alpha_{PS}'};
-unitDets = {180/pi,'^o'};
+ %varName = {'alphaPS'};
+ %strLegend = {'\alpha_{PS}'};
+ %unitDets = {180/pi,'^o'};
+
+
+% varName = {'alphaPS','LLA0','AS2','LMmax'};
+% strLegend = {'\alpha_{PS}','L_{LA0}','A_{S2}','L_{Mmax}'};
+% unitDets = {180/pi,'^o';1e6,'\mum';1e12,'mm^2';1e6,'\mum'};
+
+varName = {'lMD','LS20','dMA0','deltam'};
+strLegend = {'l_{MD}','L_{S2,0}','d_{MA0}','\delta_m'};
+unitDets = {1e6,'\mum';1e6,'\mum';1e6,'\mum';1e6,'\mum'};
 
 N = length(varName); %number of material parameters
 

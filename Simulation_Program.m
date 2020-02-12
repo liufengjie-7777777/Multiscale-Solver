@@ -10,18 +10,18 @@ if input('Which experiment do you want to simulate?\nEnter 1 for biaxial and 0 f
 else
     a = ArteryStrip;
     a.cs.ltG = 1.69; %Circumferential stretch ratio
-    Sim = 'Uniaxial';
+    Sim = 'Biaxial';
 end
 
-varNames = {'ltG'};
-saveDir = 'Simulation Results3\';
+varNames = {'lambda'};
+saveDir = 'lz Simulations\';
 
 for k=1:length(varNames)
     varName = varNames{k}; %'beta';
     mkdir([saveDir varName ' Simulations\']);
     
     OriginalVarValue = a.cs.(varName);
-    varValues = linspace(1.2,2,9); %.(varName);
+    varValues = [1.54]; %linspace(1.5,2,9); %.(varName);
     a.PrintProgress = 0;
     
     if ~a.InitialParameters
