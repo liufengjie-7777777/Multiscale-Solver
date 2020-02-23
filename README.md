@@ -11,8 +11,8 @@ Run a simulation:
 -----------------
 1. Run *Model_Solver.m*.
 2. Enter the type of loading you would like to simulate: biaxial or uniaxial (inflation and extension or ring test, respectively).
-3. You can also define the loading conditions on the *Model_Solver.m*; inner pressure, axial stretch or circumferential stretch.
-4. To change arterial wall material parametersm both active and passive, see the varaibles in the artery class in *Artery.m*.
+3. You can also define the loading conditions on *Model_Solver.m*; inner pressure, axial stretch or circumferential stretch.
+4. To change arterial wall material parameters both active and passive, see the varaibles in the artery class in *Artery.m*.
 
 Plot Results:
 -------------
