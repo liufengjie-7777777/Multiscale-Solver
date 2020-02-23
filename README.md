@@ -16,9 +16,11 @@ Run a simulation:
 
 Plot Results:
 -------------
-To plot the results use *Plot_Results.m*. This file was used extensively during my research and it is a bit scary at first glance, but there are comments within the code that explain most of the plotting options.
+1. For a simple plotting of a simulation, use the method *PlotResults*.
+2. To analyze and visualize the results in additional ways, use *Plot_Results.m*. This file was used extensively during my research and it is a bit scary at first glance, but there are comments within the code that explain most of the plotting options. The code is organized in several sections, so use *Run section* for the desired outcome.
+
 *I am planning to organize it in the near future and make it more user friendly.*
 
 Sensitivity Test:
 -----------------
-*Simulation_Program.m* offers automatic simulations to conduct sensitivity tests. *Plot_Results.m* knows to analyze and visualize these results.
+*Simulation_Program.m* conducts automatic sensitivity test simulations. *Plot_Results.m* can analyze and visualize these results.
