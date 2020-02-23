@@ -18,10 +18,12 @@ saveDir = 'lz Simulations\';
 
 for k=1:length(varNames)
     varName = varNames{k}; %'beta';
-    mkdir([saveDir varName ' Simulations\']);
+    mkdir(['Simulations\' saveDir varName ' Simulations\']);
     
     OriginalVarValue = a.cs.(varName);
-    varValues = [1.54]; %linspace(1.5,2,9); %.(varName);
+    %Define values for sensitivity test
+    varValues = linspace(0.5,1.5,6).*a.cs.(varName);
+    
     a.PrintProgress = 0;
     
     if ~a.InitialParameters
@@ -53,11 +55,7 @@ for k=1:length(varNames)
                     end
                 end
             end
-            
-            %ufs(:,:,n) = a.V.ufsN;
-            %ri(:,n) = a.V.ri;
-            
-            save([saveDir varName ' Simulations\' Sim 'Simulation-' varName '(' num2str(n) ').mat'],'a');
+            save(['Simulations\' saveDir varName ' Simulations\' Sim 'Simulation-' varName '(' num2str(n) ').mat'],'a');
         end
     end
     a.cs.(varName) = OriginalVarValue;

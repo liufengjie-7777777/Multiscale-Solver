@@ -15,9 +15,6 @@ else
     a.cs.ltG = 1.69; %Circumferential stretch ratio
 end
 
-%a.alphaPS = 40*pi/180; %rad
-%a.cs.lambda = 1.58;
-
 if ~a.InitialParameters
     SamplePoints = length(a.V.time);
     %Active Simulation
